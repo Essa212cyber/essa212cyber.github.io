@@ -1103,12 +1103,12 @@ const sshArabicGradePlaylists = {
  });
  const form=byId('assistantForm'),input=byId('assistantInput'),output=byId('assistantOutput');
  if(form&&input&&output){
-  const blocked=/(?:\b(?:fuck|shit|bitch|asshole|bastard|motherfucker|slut|whore|nigger|faggot)\b|\b(?:كس|قحبة|شرموطة|زب|متناك)\b)/iu;
+  const blocked=/(?:\b(?:fuck|shit|bitch|asshole|bastard|motherfucker|slut|whore|nigger|faggot|porn(?:ography)?|xxx|nude|naked|masturbat\w*|blowjob|handjob|dick|pussy|cock|cum)\b|(?:كس|قحبة|شرموطة|زب|متناك|إباحية|اباحي|عاري|عاهرة|قضيب|مهبل))/iu;
   const stop=new Set(['what','which','where','when','who','why','how','can','could','would','should','please','explain','define','tell','about','the','and','for','from','with','this','that','chapter','lesson','meaning','give','me','is','are','was','were','a','an','to','of','in','on','it','does','do']);
   form.addEventListener('submit',event=>{
    event.preventDefault();const q=input.value.trim();
-   if(!q){output.textContent='Type a short study question first.';return;}
-   if(blocked.test(q)){output.textContent='Please keep the conversation respectful and ask a school-related question.';input.value='';return;}
+   if(!q){output.textContent=document.documentElement.lang==='ar'?'اكتب سؤالاً دراسياً قصيراً أولاً.':'Type a short study question first.';return;}
+   if(blocked.test(q)){output.textContent=document.documentElement.lang==='ar'?'يرجى استخدام لغة محترمة وطرح سؤال متعلق بالدراسة.':'Please keep the conversation respectful and ask a school-related question.';input.value='';return;}
    const terms=q.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu,' ').split(/\s+/).filter(w=>w.length>2&&!stop.has(w));
    const area=byId('chapterArea');
    const nodes=area?[...area.querySelectorAll('h2,h3,h4,p,li,.note,.question,.revision-banner')]:[];
