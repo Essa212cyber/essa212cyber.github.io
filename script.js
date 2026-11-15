@@ -1170,3 +1170,72 @@ const sshArabicGradePlaylists = {
   // Re-render after the last older preference-restoration block has run.
   renderChapters();
 })();
+
+
+/* SECURITY HARDENING — render student-entered task text as text, never as HTML. */
+(function(){
+  const form = document.getElementById("taskForm");
+  const input = document.getElementById("taskInput");
+  const list = document.getElementById("taskList");
+  if (!form || !input || !list) return;
+
+  let safeTasks = [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem("sshTasks") || "[]");
+    if (Array.isArray(parsed)) {
+      safeTasks = parsed
+        .filter(item => item && typeof item.text === "string")
+        .slice(0, 200)
+        .map(item => ({ text: item.text.slice(0, 80), done: item.done === true }));
+    }
+  } catch (_) {
+    safeTasks = [];
+  }
+
+  function saveAndDraw(){
+    try { localStorage.setItem("sshTasks", JSON.stringify(safeTasks)); } catch (_) {}
+    draw();
+  }
+
+  function draw(){
+    list.replaceChildren();
+    if (!safeTasks.length) {
+      const empty = document.createElement("li");
+      empty.textContent = document.documentElement.lang === "ar"
+        ? "ستظهر مهامك الدراسية هنا."
+        : "Your study tasks will appear here.";
+      empty.className = "empty-task-message";
+      list.appendChild(empty);
+      return;
+    }
+
+    safeTasks.forEach((task, index) => {
+      const item = document.createElement("li");
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = task.done;
+      checkbox.setAttribute("aria-label", document.documentElement.lang === "ar" ? "تم إنجاز المهمة" : "Mark task complete");
+      checkbox.addEventListener("change", () => {
+        safeTasks[index].done = checkbox.checked;
+        saveAndDraw();
+      });
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + task.text));
+      item.appendChild(label);
+      list.appendChild(item);
+    });
+  }
+
+  form.onsubmit = function(event){
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    safeTasks.push({ text: text.slice(0, 80), done: false });
+    safeTasks = safeTasks.slice(-200);
+    input.value = "";
+    saveAndDraw();
+  };
+
+  draw();
+})();
