@@ -595,7 +595,7 @@ const sshArabicGradePlaylists = {
   if(playlist){
    $('#chapterList').innerHTML='<div class="revision-banner"><b>دروس الصف '+grade+'</b><p>قائمة تشغيل عربية تعليمية من قناة عين دروس. تحتوي على دروس للصف وقد لا تكون مرتبة حسب مادة CBSE المختارة.</p></div>';
    $('#chapterCount').textContent='01';
-   $('#chapterArea').innerHTML='<div class="chapter-top"><div><span class="eyebrow">مكتبة الفيديو العربية</span><h2>دروس الصف '+grade+'</h2></div><span class="chapter-tag">عين دروس</span></div><p class="chapter-desc">شروحات عربية داخل الموقع. اختر الفيديو من قائمة التشغيل.</p><div class="video-card"><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list='+playlist+'" title="دروس الصف '+grade+' باللغة العربية" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note">هذه قائمة تشغيل للصف وليست مكتبة مفهرسة لكل مادة وفصل. تتم إضافة المحتوى المطابق لكل مادة بعد التحقق منه.</p></div>';
+   $('#chapterArea').innerHTML='<div class="chapter-top"><div><span class="eyebrow">مكتبة الفيديو العربية</span><h2>دروس الصف '+grade+'</h2></div><span class="chapter-tag">عين دروس</span></div><p class="chapter-desc">شروحات عربية داخل الموقع. اختر الفيديو من قائمة التشغيل.</p><div class="video-card"><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list='+playlist+'" title="دروس الصف '+grade+' باللغة العربية" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note">هذه قائمة تشغيل للصف وليست مكتبة مفهرسة لكل مادة وفصل. <a href="https://www.youtube.com/playlist?list='+playlist+'" target="_blank" rel="noopener noreferrer">افتح قائمة التشغيل على يوتيوب</a>. تتم إضافة المحتوى المطابق لكل مادة بعد التحقق منه.</p></div>';
   }else{
    $('#chapterArea').insertAdjacentHTML('beforeend','<div class="scope-note">لم يتم التحقق بعد من قائمة تشغيل عربية مضمّنة لهذا الصف والمادة. لن نعرض فيديو عشوائياً. المصدر الرسمي للدروس هو <a href="https://www.ientv.edu.sa/ar/doros" target="_blank" rel="noopener">قنوات عين دروس</a>.</div>');
   }
@@ -1253,4 +1253,26 @@ const sshArabicGradePlaylists = {
   };
 
   draw();
+})();
+
+ 
+/* Add a contextual playback fallback note under any embedded lesson player. */
+(function(){
+ const area=document.getElementById("chapterArea");
+ if(!area)return;
+ function refreshPlaybackHelp(){
+  const hasFrame=!!area.querySelector("iframe.video-frame");
+  const existing=area.querySelector(".dynamic-video-help");
+  if(!hasFrame){if(existing)existing.remove();return;}
+  const note=existing||document.createElement("p");
+  note.className="video-refresh-note dynamic-video-help";
+  const isArabic=document.documentElement.lang==="ar";
+  note.textContent=isArabic
+   ? "إذا لم يظهر الفيديو أو لم يبدأ التشغيل، حدّث الصفحة (Ctrl+R). إذا استمرت المشكلة، استخدم رابط فتح الفيديو أو صفحة المصدر الموجودة أسفل المشغّل."
+   : "If the video is blank or will not play, refresh this page (Ctrl+R). If the problem continues, use the video or source link below the player.";
+  if(!existing)area.appendChild(note);
+ }
+ const observer=new MutationObserver(refreshPlaybackHelp);
+ observer.observe(area,{childList:true,subtree:true});
+ refreshPlaybackHelp();
 })();
