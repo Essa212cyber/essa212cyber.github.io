@@ -1176,9 +1176,9 @@ const sshArabicGradePlaylists = {
       tab.innerHTML =
         '<div class="revision-banner"><b>دروس الصف الحادي عشر باللغة العربية · Grade 11 Arabic lessons</b>' +
         '<p>هذه صفحة دروس عربية رسمية للصف، وتُستخدم كمصدر مساعد. قد لا تتبع ترتيب فصول Biology في منهج CBSE، لذلك طابق عنوان الدرس مع كتابك.</p></div>' +
-        '<div class="video-card"><h4>Grade 11 · Arabic lesson library</h4>' +
+        '<div class="video-card"><h4>مكتبة الدروس العربية · الصف الحادي عشر</h4>' +
         '<iframe class="video-frame" src="' + url + '" title="Grade 11 Arabic lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' +
-        '<p class="video-note"><a href="' + url + '" target="_blank" rel="noopener noreferrer">Open the official Arabic lesson page</a></p></div>';
+        '<p class="video-note"><a href="' + url + '" target="_blank" rel="noopener noreferrer">افتح صفحة الدروس العربية الرسمية</a></p></div>';
     }
   };
 
