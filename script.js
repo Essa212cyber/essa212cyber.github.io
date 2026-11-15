@@ -1124,3 +1124,49 @@ const sshArabicGradePlaylists = {
   });
  }
 })();
+
+
+/* FINAL LANGUAGE ISOLATION FIX — keep Arabic and English page preferences separate. */
+(function(){
+  const language = document.getElementById("languageSelect");
+  if (!language) return;
+
+  const isArabicPage = document.documentElement.lang === "ar";
+  const preferenceKey = isArabicPage ? "sshVideoLanguage_ar" : "sshVideoLanguage_en";
+  const pageDefault = isArabicPage ? "Arabic" : "English";
+  const saved = localStorage.getItem(preferenceKey);
+
+  // Older releases used one shared key, which could make the Arabic page
+  // inherit "English" from the English page. Ignore that shared setting.
+  language.value = (saved === "Arabic" || saved === "English") ? saved : pageDefault;
+
+  language.addEventListener("change", function(){
+    localStorage.setItem(preferenceKey, language.value);
+  });
+
+  // Biology's Arabic section uses the Grade 11 official Arabic lesson page.
+  // This is labelled as grade-level concept support, not as a CBSE chapter match.
+  const renderBeforeLanguageFix = renderChapters;
+  renderChapters = function(){
+    renderBeforeLanguageFix();
+    const curr = document.getElementById("curriculum")?.value || "";
+    const grade = document.getElementById("classSelect")?.value || "";
+    const subject = document.getElementById("subjectSelect")?.value || "";
+    if (language.value !== "Arabic" || curr !== "CBSE" || grade !== "11" || subject !== "Biology" || activeTab !== "videos") return;
+
+    const tab = document.getElementById("tabContent");
+    if (!tab) return;
+    const url = (typeof sshGetAinPage === "function")
+      ? sshGetAinPage(curr, grade)
+      : "https://www.ientv.edu.sa/ar/doros";
+    tab.innerHTML =
+      '<div class="revision-banner"><b>دروس أحياء باللغة العربية · Arabic Biology support</b>' +
+      '<p>هذه دروس عربية للصف الحادي عشر من مصدر تعليمي سعودي. استخدمها لفهم المفاهيم، ثم طابق الموضوع مع فصل CBSE في كتابك؛ فهي ليست قائمة مرتبة حسب فصول CBSE.</p></div>' +
+      '<div class="video-card"><h4>Grade 11 · Arabic lesson library</h4>' +
+      '<iframe class="video-frame" src="' + url + '" title="Grade 11 Arabic Biology support lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' +
+      '<p class="video-note"><a href="' + url + '" target="_blank" rel="noopener noreferrer">Open the official Arabic lesson page</a></p></div>';
+  };
+
+  // Re-render after the last older preference-restoration block has run.
+  renderChapters();
+})();
