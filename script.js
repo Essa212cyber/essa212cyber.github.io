@@ -1092,10 +1092,10 @@ const sshArabicGradePlaylists = {
   const arabicSource=language==='Arabic'&&!!sshGetAinPage(curr,grade);
   const isDetailed=curr==='CBSE'&&grade==='11'&&['Biology','Chemistry','Physics','Mathematics','English','Arabic'].includes(subject);
   if(video||playlist||arabicSource||isDetailed){
-   status.textContent='✓ Search completed. Showing '+curr+' · Grade '+grade+' · '+subject+' · '+language+' lessons. Check the source note to see whether the video is syllabus-matched or concept support.';
+   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. تظهر دروس '+curr+' · الصف '+grade+' · '+subject+' · '+language+'. راجع ملاحظة المصدر لمعرفة ما إذا كان الدرس مطابقاً للمنهج أم شرحاً مساعداً.':'✓ Search completed. Showing '+curr+' · Grade '+grade+' · '+subject+' · '+language+' lessons. Check the source note to see whether the video is syllabus-matched or concept support.';
    status.dataset.state='success';
   }else{
-   status.textContent='✓ Search completed. Your selection is displayed. Verified chapter videos and complete study materials for this combination are still being prepared; no random lessons were inserted.';
+   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. تم عرض اختيارك. لا تزال الفيديوهات المطابقة للفصول والمواد الدراسية الكاملة قيد الإعداد؛ ولم نُضف دروساً عشوائية.':'✓ Search completed. Your selection is displayed. Verified chapter videos and complete study materials for this combination are still being prepared; no random lessons were inserted.';
    status.dataset.state='pending';
   }
   area?.scrollIntoView({behavior:'smooth',block:'start'});
