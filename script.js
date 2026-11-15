@@ -1089,13 +1089,14 @@ const sshArabicGradePlaylists = {
   const curr=byId('curriculum')?.value||'',grade=byId('classSelect')?.value||'',subject=byId('subjectSelect')?.value||'',language=byId('languageSelect')?.value||'';
   const area=byId('chapterArea'),video=area?.querySelector('.video-frame');
   const playlist=!!((sshVerifiedEnglishPlaylists[String(grade)]||{})[subject]);
-  const arabicSource=language==='Arabic'&&!!sshGetAinPage(curr,grade);
-  const isDetailed=curr==='CBSE'&&grade==='11'&&['Biology','Chemistry','Physics','Mathematics','English','Arabic'].includes(subject);
-  if(video||playlist||arabicSource||isDetailed){
-   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. تظهر دروس '+curr+' · الصف '+grade+' · '+subject+' · '+language+'. راجع ملاحظة المصدر لمعرفة ما إذا كان الدرس مطابقاً للمنهج أم شرحاً مساعداً.':'✓ Search completed. Showing '+curr+' · Grade '+grade+' · '+subject+' · '+language+' lessons. Check the source note to see whether the video is syllabus-matched or concept support.';
+  if(video){
+   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. تم عرض مصدر درس مضمّن لاختيارك: '+curr+' · الصف '+grade+' · '+subject+' · '+language+'. إذا لم يعمل المشغّل، حدّث الصفحة أو استخدم رابط فتح الدرس.':'✓ Search completed. An embedded lesson source is displayed for '+curr+' · Grade '+grade+' · '+subject+' · '+language+'. If playback fails, refresh the page or use the open-lesson link.';
+   status.dataset.state='success';
+  }else if(playlist){
+   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. توجد قائمة فيديوهات للمادة والصف. افتح تبويب الفيديوهات لتشغيلها، ثم طابق عنوان الدرس مع كتابك.':'✓ Search completed. A course playlist exists for this grade and subject. Open the Videos tab and match each lesson title to your textbook.';
    status.dataset.state='success';
   }else{
-   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث. تم عرض اختيارك. لا تزال الفيديوهات المطابقة للفصول والمواد الدراسية الكاملة قيد الإعداد؛ ولم نُضف دروساً عشوائية.':'✓ Search completed. Your selection is displayed. Verified chapter videos and complete study materials for this combination are still being prepared; no random lessons were inserted.';
+   status.textContent=document.documentElement.lang==='ar'?'✓ اكتمل البحث عن اختيارك، لكن لا يوجد حالياً فيديو مضمّن تم التحقق منه لهذا التحديد. لا نعرض فيديوهات عشوائية؛ راجع رابط الكتاب أو المصدر الرسمي.':'✓ Search completed for your selection, but there is no verified embedded video for this combination yet. We will not show random videos; use the official textbook or curriculum link.';
    status.dataset.state='pending';
   }
   area?.scrollIntoView({behavior:'smooth',block:'start'});
