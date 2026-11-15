@@ -505,6 +505,11 @@ renderChapters();
 
 // English video playlists checked against the publisher's public playlist listings.
 const sshVerifiedEnglishPlaylists = {
+  "6":{"Science":["PLVLoWQFkZbhVTN4qVwb-OgW9sBPsep9XX"]},
+  "7":{
+    "Science":["PLVLoWQFkZbhVcZ8f3BMLxt5E17GmIitf-"],
+    "Mathematics":["PLVLoWQFkZbhVgT5aM-GRuQHnzthwllEHq"]
+  },
   "8":{"Science":["PLVLoWQFkZbhV8K8NiJrFoMSwa_34UDMdg"]},
   "9":{
     "Physics":["PLVLoWQFkZbhXPtVijvwSni52nnKIh7p2k"],
