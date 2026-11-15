@@ -119,7 +119,29 @@ function renderChemQuestionBank(d,heading){
 function renderTab(isChem){let el=$('#tabContent');if(isChem){let d=chemistry[activeChapter],lang=$('#languageSelect').value;if(activeTab==='videos'){let videos=(lang==='English'?d.en:d.ar).filter(v=>v[2]);el.innerHTML=`<div class="revision-banner"><b>${lang==='English'?'English learning videos':'مقاطع تعليمية باللغة العربية'}</b><p>${lang==='English'?'Selected chapter-specific lessons and revision videos.':'مقاطع عربية مساعدة لفهم المفاهيم. بعض الشروحات من مناهج عربية أخرى، لذا قارن الموضوع مع منهج CBSE.'}</p></div><div class="video-grid">${videos.map(v=>videoCard(v,lang)).join('')}</div><p class="video-note">Videos are embedded from their publishers. Arabic resources are concept-support materials, not a claim that they follow the CBSE textbook sequence exactly.</p>`}else if(activeTab==='notes'){el.innerHTML=`<div class="notes-grid">${d.notes.map((n,i)=>`<div class="note"><b>Key point ${i+1}</b><p>${n}</p></div>`).join('')}</div>`}else if(activeTab==='questions'){el.innerHTML=renderChemQuestionBank(d,'important questions');bindReveals()}else if(activeTab==='midterm'||activeTab==='final'){let mid=activeTab==='midterm';el.innerHTML=`<div class="revision-banner"><b>${mid?'Midterm revision':'Final examination revision'}</b><p>${mid?'Use this complete chapter practice set for your midterm preparation. Work through concepts first, then attempt the numerical problems.':'Use this complete chapter practice set for final preparation. Revise the notes, solve all questions without help, and check your answers afterwards.'}</p></div><h3>Revision checklist</h3><ul class="revision-list">${d.notes.map(n=>`<li>${n}</li>`).join('')}<li>Read the corresponding NCERT section and solve textbook examples.</li><li>Attempt all 20 questions, including the numerical problems, without looking at the answers.</li></ul>${renderChemQuestionBank(d,mid?'midterm practice':'final exam practice')}`;bindReveals()}else if(activeTab==='quiz'){el.innerHTML=`<div class="revision-banner"><b>Chapter knowledge check</b><p>Try a short self-check. This quiz is currently a general Chemistry starter quiz; more chapter-specific quizzes will be added.</p></div><div class="question"><h4>Which statement best describes a mole?</h4><button class="reveal" id="chemReveal">Show answer</button><div class="answer" id="chemAnswer">A mole contains 6.02214076 × 10²³ specified elementary entities.</div></div>`;$('#chemReveal').onclick=()=>$('#chemAnswer').classList.toggle('show')}}else{if(activeChapter!==10){el.innerHTML=`<div class="revision-banner"><b>Chapter content is being curated.</b><p>Detailed notes, videos and questions will be added chapter by chapter after syllabus verification.</p></div>`;return}if(activeTab==='videos'){let lang=$('#languageSelect').value,cards=lang==='English'?[['Full lesson · Part 1','Photosynthesis, early experiments, chloroplasts, pigments and light reactions','BSSZXlD2rtw'],['Full lesson · Part 2','Calvin cycle, C4 pathway and factors affecting photosynthesis','JHoEvJq2SO8']]:[['Light reactions · Arabic','شرح التفاعلات الضوئية في البناء الضوئي','gVux2PiSKWE'],['Calvin cycle · Arabic','شرح التفاعلات اللاضوئية (حلقة كالفن)','R6zbVz4h4yM']];el.innerHTML=`<div class="video-grid">${cards.map(c=>videoCard(c,lang)).join('')}</div>`}else if(activeTab==='notes'){let ns=['Plants capture light energy and store it as chemical energy in organic molecules.','Photosynthesis takes place in chloroplasts.','Light reactions occur on thylakoid membranes and produce ATP and NADPH.','The Calvin cycle occurs in the stroma and fixes carbon dioxide.'];el.innerHTML=`<div class="notes-grid">${ns.map((n,i)=>`<div class="note"><b>Key point ${i+1}</b><p>${n}</p></div>`).join('')}</div>`}else if(activeTab==='questions'||activeTab==='midterm'||activeTab==='final'){el.innerHTML=bioQuestions.map((q,i)=>`<div class="question"><h4>${i+1}. ${q.q}</h4><button class="reveal" data-reveal="${i}">Show answer</button><div class="answer" id="answer${i}">${q.a}</div></div>`).join('');bindReveals()}else if(activeTab==='quiz'){el.innerHTML=`<button class="btn primary" id="startChapterQuiz">Start chapter quiz →</button><div id="chapterQuizBox"></div>`;$('#startChapterQuiz').onclick=()=>startQuiz('#chapterQuizBox')}}}
 function bindReveals(){document.querySelectorAll('[data-reveal]').forEach(b=>b.onclick=()=>{let a=$('#answer'+b.dataset.reveal);a.classList.toggle('show');b.textContent=a.classList.contains('show')?'Hide answer':'Show answer'});document.querySelectorAll('[data-qfilter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-qfilter]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.chem-question').forEach(q=>q.style.display=b.dataset.qfilter==='all'||q.dataset.qtype===b.dataset.qfilter?'':'none')})}
 function startQuiz(target){quizIndex=0;quizScore=0;showQuiz(target)}function showQuiz(target){let box=$(target);if(quizIndex>=quizQs.length){box.innerHTML=`<h3>Quiz complete!</h3><p>You scored ${quizScore} out of ${quizQs.length}.</p><button class="btn primary" id="againQuiz">Try again</button>`;$('#againQuiz').onclick=()=>startQuiz(target);return}let q=quizQs[quizIndex];box.innerHTML=`<p class="eyebrow">QUESTION ${quizIndex+1} OF ${quizQs.length}</p><div class="quiz-question">${q.q}</div><div class="quiz-options">${q.o.map((o,i)=>`<button class="quiz-option" data-choice="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><p id="quizFeedback"></p>`;box.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{let choice=Number(b.dataset.choice);box.querySelectorAll('.quiz-option').forEach(x=>x.disabled=true);b.classList.add(choice===q.a?'correct':'wrong');if(choice===q.a)quizScore++;$('#quizFeedback').textContent=(choice===q.a?'Correct! ':'Not quite. ')+q.e;let next=document.createElement('button');next.className='btn primary small';next.textContent=quizIndex===quizQs.length-1?'See result':'Next question';next.onclick=()=>{quizIndex++;showQuiz(target)};box.append(next)})}
-$('#curriculum').onchange=()=>{activeChapter=0;renderChapters()};$('#classSelect').onchange=()=>{activeChapter=0;renderChapters()};$('#subjectSelect').onchange=()=>{activeChapter=$('#subjectSelect').value==='Biology'?10:0;renderChapters()};$('#languageSelect').onchange=()=>{if(activeTab==='videos')renderChapters()};$('#dailyQuiz').onclick=()=>{startQuiz('#quizArea');$('#quizArea').scrollIntoView({behavior:'smooth',block:'center'})};$('#themeToggle').onclick=()=>document.body.classList.toggle('dark');$('#attendanceBtn').onclick=()=>{let a=Number($('#attended').value),t=Number($('#total').value);$('#attendanceResult').textContent=t>0&&a>=0&&a<=t?(a/t*100).toFixed(1)+'% attendance':'Enter valid class counts.'};$('#marksBtn').onclick=()=>{let a=Number($('#marks').value),t=Number($('#outOf').value);$('#marksResult').textContent=t>0&&a>=0&&a<=t?(a/t*100).toFixed(1)+'%':'Enter valid marks.'};let tasks=JSON.parse(localStorage.getItem('sshTasks')||'[]');function drawTasks(){$('#taskList').innerHTML=tasks.map((t,i)=>`<li><label><input type="checkbox" data-task="${i}" ${t.done?'checked':''}> ${t.text}</label></li>`).join('');document.querySelectorAll('[data-task]').forEach(c=>c.onchange=()=>{tasks[Number(c.dataset.task)].done=c.checked;saveTasks()})}function saveTasks(){localStorage.setItem('sshTasks',JSON.stringify(tasks));drawTasks()}$('#taskForm').onsubmit=e=>{e.preventDefault();tasks.push({text:$('#taskInput').value,done:false});$('#taskInput').value='';saveTasks()};drawTasks();let seconds=1500,timerId=null;function showTimer(){$('#timer').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}$('#timerStart').onclick=()=>{if(timerId)return;timerId=setInterval(()=>{seconds=Math.max(0,seconds-1);showTimer();if(!seconds){clearInterval(timerId);timerId=null;alert('Focus session complete. Take a short break!')}},1000)};$('#timerReset').onclick=()=>{clearInterval(timerId);timerId=null;seconds=1500;showTimer()};$('#year').textContent=new Date().getFullYear();$('#subjectSelect').value='Biology';renderChapters();
+$('#curriculum').onchange=()=>{activeChapter=0;renderChapters()};$('#classSelect').onchange=()=>{activeChapter=0;renderChapters()};$('#subjectSelect').onchange=()=>{activeChapter=$('#subjectSelect').value==='Biology'?10:0;renderChapters()};$('#languageSelect').onchange=()=>{if(activeTab==='videos')renderChapters()};$('#dailyQuiz').onclick=()=>{startQuiz('#quizArea');$('#quizArea').scrollIntoView({behavior:'smooth',block:'center'})};$('#themeToggle').onclick=()=>document.body.classList.toggle('dark');$('#attendanceBtn').onclick=()=>{let a=Number($('#attended').value),t=Number($('#total').value);$('#attendanceResult').textContent=t>0&&a>=0&&a<=t?(a/t*100).toFixed(1)+'% attendance':'Enter valid class counts.'};$('#marksBtn').onclick=()=>{let a=Number($('#marks').value),t=Number($('#outOf').value);$('#marksResult').textContent=t>0&&a>=0&&a<=t?(a/t*100).toFixed(1)+'%':'Enter valid marks.'};let tasks=[];
+try{
+ const storedTasks=JSON.parse(localStorage.getItem('sshTasks')||'[]');
+ if(Array.isArray(storedTasks))tasks=storedTasks.filter(t=>t&&typeof t.text==='string').slice(0,100).map(t=>({text:t.text.slice(0,80),done:!!t.done}));
+}catch(e){tasks=[];}
+function drawTasks(){
+ const list=$('#taskList');if(!list)return;list.replaceChildren();
+ if(!tasks.length){const empty=document.createElement('li');empty.textContent='Your study tasks will appear here.';empty.className='empty-task-message';list.append(empty);}
+ tasks.forEach((task,i)=>{
+  const li=document.createElement('li'),label=document.createElement('label'),check=document.createElement('input');
+  check.type='checkbox';check.checked=task.done;check.dataset.task=String(i);
+  check.addEventListener('change',()=>{tasks[i].done=check.checked;saveTasks();});
+  label.append(check,document.createTextNode(' '+task.text));li.append(label);list.append(li);
+ });
+}
+function saveTasks(){localStorage.setItem('sshTasks',JSON.stringify(tasks));drawTasks();}
+const taskForm=$('#taskForm');
+if(taskForm)taskForm.onsubmit=e=>{
+ e.preventDefault();const field=$('#taskInput'),value=field.value.trim();if(!value)return;
+ if(tasks.length>=100){alert('Please complete or remove a task before adding another.');return;}
+ tasks.push({text:value.slice(0,80),done:false});field.value='';saveTasks();
+};
+drawTasks();let seconds=1500,timerId=null;function showTimer(){$('#timer').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}$('#timerStart').onclick=()=>{if(timerId)return;timerId=setInterval(()=>{seconds=Math.max(0,seconds-1);showTimer();if(!seconds){clearInterval(timerId);timerId=null;alert('Focus session complete. Take a short break!')}},1000)};$('#timerReset').onclick=()=>{clearInterval(timerId);timerId=null;seconds=1500;showTimer()};$('#year').textContent=new Date().getFullYear();$('#subjectSelect').value='Biology';renderChapters();
 // Saudi Student Hub expansion: CBSE Class 11 subject libraries
 const extraSubjects = {
   Biology: [
@@ -296,11 +318,11 @@ function renderExtraSubject(subject, chapterIndex){
   // Embedded Class 11 course playlists. These are supplementary video libraries;
   // students should match each lesson to their current textbook chapter.
   const subjectVideoPlaylists = {
-    Biology: {id:'PLVLoWQFkZbhV712zSP3S2uH2SoDpzchvK', source:'Magnet Brains / Class 11 course playlist'},
-    Physics: {id:'PLVLoWQFkZbhXIV2NMcLdNROvfhAsW7Z-U', source:'Magnet Brains / Class 11 course playlist'},
-    Mathematics: {id:'PLVLoWQFkZbhVTcotKKM8XX5KVXSFyXixJ', source:'Magnet Brains / Class 11 course playlist'},
-    English: {id:'PLVLoWQFkZbhVWaTIGB27JMv0btP9bbJb2', source:'Class 11 English video playlist'}
-  };
+    Biology: {id:'PLVLoWQFkZbhV712zSP3S2uH2SoDpzchvK', source:'Magnet Brains · Class 11 Biology full-course playlist'},
+    Physics: {id:'PLVLoWQFkZbhXIV2NMcLdNR0vfhAsW7Z-U', source:'Magnet Brains · Class 11 Physics playlist'},
+    Mathematics: {id:'PLVLoWQFkZbhVTcotKKM8X5VKxVSFyXixJ', source:'Magnet Brains · Class 11 Mathematics playlist'},
+    English: {id:'PLVLoWQFkZbhVWaTIGB27JMv0btP9bbJb2', source:'Magnet Brains · Class 11 English playlist'}
+  }
  const chapters=extraSubjects[subject], ch=chapters[chapterIndex];
  const isLang=$('#languageSelect').value;
  $('#chapterArea').innerHTML=`<div class="chapter-top"><div><span class="eyebrow">CBSE · CLASS 11 · ${subject.toUpperCase()}</span><h2>${ch[0]}</h2></div><span class="chapter-tag">LEARNING LIBRARY</span></div><p class="chapter-desc">${ch[1]}</p><div class="tabs">${tabButton('videos','▶ Videos')}${tabButton('definitions','📘 Easy definitions')}${tabButton('notes','✎ Key points')}${tabButton('questions','★ Important questions')}${tabButton('midterm','▤ Midterm revision')}${tabButton('final','🏁 Final revision')}${tabButton('quiz','✓ Practice check')}</div><div class="tab-content" id="tabContent"></div>`;
@@ -399,9 +421,18 @@ function sshUpdateSubjectOptions(){
   $('#subjectSelect').innerHTML=subjects.map(x=>'<option value="'+x.replace(/"/g,'&quot;')+'">'+x+'</option>').join('');
   $('#subjectSelect').value=subjects.includes(previous)?previous:subjects[0];
 }
+function sshGetAinPage(curr,grade){
+ const g=String(grade),path=document.querySelector('#saudiPathwaySelect')?.value||'General Pathway';
+ const pages={
+  '11':{'General Pathway':'https://www.ientv.edu.sa/ar/node/343','Computer Science and Engineering Pathway':'https://www.ientv.edu.sa/ar/node/344','Islamic Studies Pathway':'https://www.ientv.edu.sa/ar/node/345','Business Administration Pathway':'https://www.ientv.edu.sa/ar/node/349'},
+  '12':{'General Pathway':'https://www.ientv.edu.sa/ar/node/346','Computer Science and Engineering Pathway':'https://www.ientv.edu.sa/ar/node/348','Islamic Studies Pathway':'https://www.ientv.edu.sa/ar/node/350'}
+ };
+ return (pages[g]&&pages[g][path])||sshAinStagePages[g]||'https://www.ientv.edu.sa/ar/doros';
+}
+
 function sshGenericChapterPage(curr,grade,subject){
   const lang=$('#languageSelect').value;
-  const ainUrl=sshAinStagePages[String(grade)];
+  const ainUrl=sshGetAinPage(curr,grade);
   const supported=(curr==='CBSE'&&String(grade)==='11'&&(['Chemistry','Biology','Physics','Mathematics','English','Arabic'].includes(subject)));
   if(supported){
     const chem=subject==='Chemistry', bio=subject==='Biology', extra=!!extraSubjects[subject];
@@ -416,7 +447,7 @@ function sshGenericChapterPage(curr,grade,subject){
   if(activeTab==='videos'){
     if(lang==='Arabic'&&ainUrl){
       el.innerHTML='<div class="revision-banner"><b>دروس باللغة العربية · Arabic-medium school lessons</b><p>Official Saudi Ministry of Education / عين دروس lesson page for this grade. It includes school lessons and term links. Choose the subject and lesson on the official page. For CBSE students, use these as Arabic-language concept support only; chapter order and syllabus may differ.</p></div><div class="video-card"><h4>Arabic lessons · Class '+grade+'</h4><iframe class="video-frame" src="'+ainUrl+'" title="Arabic school lessons for class '+grade+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note">If the provider blocks embedding, <a href="'+ainUrl+'" target="_blank" rel="noopener">open the official Arabic lesson page</a>.</p></div><p class="video-note">Source: official عين دروس stage and grade pages. The publisher controls video availability.</p>';
-    } else if(lang==='English' && curr==='CBSE') {
+    } else if(lang==='English') {
       const gradeKey=String(grade);
       const verified=(sshVerifiedEnglishPlaylists[gradeKey]||{});
       let ids=verified[subject]||[];
@@ -473,16 +504,37 @@ renderChapters();
 
 // English video playlists checked against the publisher's public playlist listings.
 const sshVerifiedEnglishPlaylists = {
-  "8": { "Science": ["PLVLoWQFkZbhV8K8NiJrFoMSwa_34UDMdg"] },
-  "9": {
-    "Physics": ["PLVLoWQFkZbhXPtVijvwSni52nnKIh7p2k"],
-    "Biology": ["PLVLoWQFkZbhU9Q_nMpMMB9HHyy4_AUXID"],
-    "Chemistry": ["PLVLoWQFkZbhW-jg1uCwnBXFE4dI9O87ni"]
+  "8":{"Science":["PLVLoWQFkZbhV8K8NiJrFoMSwa_34UDMdg"]},
+  "9":{
+    "Physics":["PLVLoWQFkZbhXPtVijvwSni52nnKIh7p2k"],
+    "Biology":["PLVLoWQFkZbhU9Q_nMpMMB9HHyy4_AUXID"],
+    "Chemistry":["PLVLoWQFkZbhW-jg1uCwnBXFE4dI9O87ni"]
   },
-  "10": {
-    "Physics": ["PLVLoWQFkZbhXAipqg8dmzLQOED1uxgUTx"],
-    "Chemistry": ["PLVLoWQFkZbhVbIi9ux7sKREnFo3jrrKzQ"],
-    "Biology": ["PLVLoWQFkZbhUmaeiHa7xKTQ3ByL6XujcQ"]
+  "10":{
+    "Physics":["PLVLoWQFkZbhXAipqg8dmzLQOED1uxgUTx"],
+    "Chemistry":["PLVLoWQFkZbhVbIi9ux7sKREnFo3jrrKzQ"],
+    "Biology":["PLVLoWQFkZbhUmaeiQ7aKTQ3ByL6XujcQ"]
+  },
+  "11":{
+    "English":["PLVLoWQFkZbhVWaTIGB27JMv0btP9bbJb2"],
+    "Physics":["PLVLoWQFkZbhXIV2NMcLdNR0vfhAsW7Z-U"],
+    "Biology":["PLVLoWQFkZbhV712zSP3S2uH2SoDpzchvK"],
+    "Chemistry":["PLVLoWQFkZbhUXZ49_8VhUDhvdcjgbzjk"],
+    "Mathematics":["PLVLoWQFkZbhVTcotKKM8X5VKxVSFyXixJ"],
+    "Business Studies":["PLVLoWQFkZbhUX5kehmM4O65KncDvJKes"],
+    "Economics":["PLVLoWQFkZbhWHDIa-cWF-Eww_K5zroTjqd","PLVLoWQFkZbhVNHr4nawXEQ0i-xkzJdTrl"],
+    "Accountancy":["PLVLoWQFkZbhWmLRc107wMYahsvARf7t2D"],
+    "History":["PLVLoWQFkZbhWcTSUuqQAUOQDxKELsSmFA"],
+    "Geography":["PLVLoWQFkZbhVXTpt-FNQYar3k6xjYW1IE"],
+    "Political Science":["PLVLoWQFkZbhXORd15t2WDISAmOP-7k2BT"]
+  },
+  "12":{
+    "Physics":["PLVLoWQFkZbhWkPohvUM2x7jypVayuzIE7"],
+    "Biology":["PLVLoWQFkZbhUWgqMK7nJvo2ZKqcaI8FJ5"],
+    "Chemistry":["PLVLoWQFkZbhV5bQjRcjQxDh_ekf6xB3"],
+    "Mathematics":["PLVLoWQFkZbhUUO6akuK-FA43pU0mXcJ06"],
+    "Business Studies":["PLVLoWQFkZbhXC_-7yeYxjS0rsqIUv3GP"],
+    "Economics":["PLVLoWQFkZbhVybVpAL5BmINyEOaw1GMGO","PLVLoWQFkZbhUDHy3Zh07rMZcUYZXI-DYa"]
   }
 };
 
@@ -1000,4 +1052,69 @@ const sshArabicGradePlaylists = {
   }
   syncPathway();
   if(typeof renderChapters==="function") renderChapters();
+})();
+
+/* Class 11 Chemistry: prevent empty video tabs when a chapter link is still unavailable. */
+(function(){
+ const previous=renderTab;
+ renderTab=function(isChem){
+  previous(isChem);
+  if(!isChem||activeTab!=='videos')return;
+  const root=document.querySelector('#tabContent');
+  if(!root||root.querySelector('iframe'))return;
+  const lang=document.querySelector('#languageSelect')?.value||'English';
+  const curr=document.querySelector('#curriculum')?.value||'CBSE';
+  if(lang==='English'){
+   const id='PLVLoWQFkZbhUXZ49_8VhUDhvdcjgbzjk';
+   root.innerHTML='<div class="revision-banner"><b>Class 11 Chemistry · English course playlist</b><p>Chapter-level links are not listed for this chapter yet. Use the playlist menu and match the topic to your textbook.</p></div><div class="video-card"><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list='+id+'" title="Class 11 Chemistry English lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p><a href="https://www.youtube.com/playlist?list='+id+'" target="_blank" rel="noopener noreferrer">Open playlist</a></p></div>';
+  }else{
+   const url=sshGetAinPage(curr,11);
+   root.innerHTML='<div class="revision-banner"><b>Arabic lesson support · Grade 11</b><p>Official Ain Doroos school lessons for the selected Saudi secondary pathway. These explain concepts in Arabic but are not mapped chapter-by-chapter to CBSE Chemistry.</p></div><div class="video-card"><iframe class="video-frame" src="'+url+'" title="Arabic secondary school lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><p><a href="'+url+'" target="_blank" rel="noopener noreferrer">Open the official lesson page</a></p></div>';
+  }
+ };
+})();
+
+/* LAUNCH FEATURES: selection search feedback and offline study helper. */
+(function(){
+ const byId=id=>document.getElementById(id);
+ const search=byId('searchLessons'),status=byId('searchStatus');
+ if(search&&status)search.addEventListener('click',()=>{
+  if(typeof renderChapters==='function')renderChapters();
+  const curr=byId('curriculum')?.value||'',grade=byId('classSelect')?.value||'',subject=byId('subjectSelect')?.value||'',language=byId('languageSelect')?.value||'';
+  const area=byId('chapterArea'),video=area?.querySelector('.video-frame');
+  const playlist=!!((sshVerifiedEnglishPlaylists[String(grade)]||{})[subject]);
+  const arabicSource=language==='Arabic'&&!!sshGetAinPage(curr,grade);
+  const isDetailed=curr==='CBSE'&&grade==='11'&&['Biology','Chemistry','Physics','Mathematics','English','Arabic'].includes(subject);
+  if(video||playlist||arabicSource||isDetailed){
+   status.textContent='✓ Search completed. Showing '+curr+' · Grade '+grade+' · '+subject+' · '+language+' lessons. Check the source note to see whether the video is syllabus-matched or concept support.';
+   status.dataset.state='success';
+  }else{
+   status.textContent='✓ Search completed. Your selection is displayed. Verified chapter videos and complete study materials for this combination are still being prepared; no random lessons were inserted.';
+   status.dataset.state='pending';
+  }
+  area?.scrollIntoView({behavior:'smooth',block:'start'});
+ });
+ const form=byId('assistantForm'),input=byId('assistantInput'),output=byId('assistantOutput');
+ if(form&&input&&output){
+  const blocked=/(?:\b(?:fuck|shit|bitch|asshole|bastard|motherfucker|slut|whore|nigger|faggot)\b|\b(?:كس|قحبة|شرموطة|زب|متناك)\b)/iu;
+  const stop=new Set(['what','which','where','when','who','why','how','can','could','would','should','please','explain','define','tell','about','the','and','for','from','with','this','that','chapter','lesson','meaning','give','me','is','are','was','were','a','an','to','of','in','on','it','does','do']);
+  form.addEventListener('submit',event=>{
+   event.preventDefault();const q=input.value.trim();
+   if(!q){output.textContent='Type a short study question first.';return;}
+   if(blocked.test(q)){output.textContent='Please keep the conversation respectful and ask a school-related question.';input.value='';return;}
+   const terms=q.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu,' ').split(/\s+/).filter(w=>w.length>2&&!stop.has(w));
+   const area=byId('chapterArea');
+   const nodes=area?[...area.querySelectorAll('h2,h3,h4,p,li,.note,.question,.revision-banner')]:[];
+   const matches=nodes.map(n=>({text:(n.innerText||n.textContent||'').trim(),score:0})).filter(x=>x.text.length>30);
+   matches.forEach(m=>{const lower=m.text.toLowerCase();m.score=terms.reduce((sum,t)=>sum+(lower.includes(t)?1:0),0);});
+   matches.sort((a,b)=>b.score-a.score);
+   const heading=area?.querySelector('h2')?.textContent||'the selected lesson';
+   if(terms.length&&matches[0]&&matches[0].score>0){
+    output.textContent='From '+heading+': '+matches.filter(m=>m.score>0).slice(0,2).map(m=>m.text).join(' ');
+   }else{
+    output.textContent='I could not find a direct match in the content currently open. Select the correct curriculum, grade and subject, choose a chapter, then open Notes or Definitions. The live generative AI tutor is planned for a future secure server connection.';
+   }
+   output.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+ }
 })();
