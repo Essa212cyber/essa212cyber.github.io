@@ -1142,10 +1142,13 @@ const sshArabicGradePlaylists = {
 
   language.addEventListener("change", function(){
     localStorage.setItem(preferenceKey, language.value);
+    if (typeof renderChapters === "function") renderChapters();
   });
 
-  // Biology's Arabic section uses the Grade 11 official Arabic lesson page.
-  // This is labelled as grade-level concept support, not as a CBSE chapter match.
+  // Never allow a saved English preference from the other page to leak into
+  // the Arabic page. For Grade 11 Biology, use known Arabic clips for the
+  // photosynthesis chapter and the official Arabic grade page as concept support
+  // for other chapters.
   const renderBeforeLanguageFix = renderChapters;
   renderChapters = function(){
     renderBeforeLanguageFix();
@@ -1156,15 +1159,26 @@ const sshArabicGradePlaylists = {
 
     const tab = document.getElementById("tabContent");
     if (!tab) return;
-    const url = (typeof sshGetAinPage === "function")
-      ? sshGetAinPage(curr, grade)
-      : "https://www.ientv.edu.sa/ar/doros";
-    tab.innerHTML =
-      '<div class="revision-banner"><b>دروس أحياء باللغة العربية · Arabic Biology support</b>' +
-      '<p>هذه دروس عربية للصف الحادي عشر من مصدر تعليمي سعودي. استخدمها لفهم المفاهيم، ثم طابق الموضوع مع فصل CBSE في كتابك؛ فهي ليست قائمة مرتبة حسب فصول CBSE.</p></div>' +
-      '<div class="video-card"><h4>Grade 11 · Arabic lesson library</h4>' +
-      '<iframe class="video-frame" src="' + url + '" title="Grade 11 Arabic Biology support lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' +
-      '<p class="video-note"><a href="' + url + '" target="_blank" rel="noopener noreferrer">Open the official Arabic lesson page</a></p></div>';
+
+    if (activeChapter === 10) {
+      tab.innerHTML =
+        '<div class="revision-banner"><b>دروس البناء الضوئي باللغة العربية · Arabic photosynthesis lessons</b>' +
+        '<p>شرح عربي للتفاعلات الضوئية وحلقة كالفن. هذه مواد مساندة لفهم المفاهيم؛ قارن التفاصيل مع كتاب CBSE المعتمد في مدرستك.</p></div>' +
+        '<div class="video-grid">' +
+        '<div class="video-card"><h4>التفاعلات الضوئية · Light reactions</h4><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/gVux2PiSKWE" title="شرح التفاعلات الضوئية باللغة العربية" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note"><a href="https://youtu.be/gVux2PiSKWE" target="_blank" rel="noopener noreferrer">Open video</a></p></div>' +
+        '<div class="video-card"><h4>حلقة كالفن · Calvin cycle</h4><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/R6zbVz4h4yM" title="شرح حلقة كالفن باللغة العربية" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note"><a href="https://youtu.be/R6zbVz4h4yM" target="_blank" rel="noopener noreferrer">Open video</a></p></div>' +
+        '</div>';
+    } else {
+      const url = (typeof sshGetAinPage === "function")
+        ? sshGetAinPage(curr, grade)
+        : "https://www.ientv.edu.sa/ar/doros";
+      tab.innerHTML =
+        '<div class="revision-banner"><b>دروس الصف الحادي عشر باللغة العربية · Grade 11 Arabic lessons</b>' +
+        '<p>هذه صفحة دروس عربية رسمية للصف، وتُستخدم كمصدر مساعد. قد لا تتبع ترتيب فصول Biology في منهج CBSE، لذلك طابق عنوان الدرس مع كتابك.</p></div>' +
+        '<div class="video-card"><h4>Grade 11 · Arabic lesson library</h4>' +
+        '<iframe class="video-frame" src="' + url + '" title="Grade 11 Arabic lessons" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' +
+        '<p class="video-note"><a href="' + url + '" target="_blank" rel="noopener noreferrer">Open the official Arabic lesson page</a></p></div>';
+    }
   };
 
   // Re-render after the last older preference-restoration block has run.
