@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://www.youtube-nocookie.com https://www.ientv.edu.sa; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Saudi Student Hub — lessons, notes, revision, quizzes and student tools for Grades 6–12.">
   <title>Saudi Student Hub | Learn, Revise, Succeed</title>
   <link rel="stylesheet" href="style.css">
@@ -133,6 +135,7 @@
         </select>
       </label>
     </div>
+    <div class="selector-search-row"><button id="searchLessons" class="btn primary" type="button">Search lessons <span aria-hidden="true">⌕</span></button><p id="searchStatus" class="search-status" role="status" aria-live="polite">Choose your curriculum, grade, subject and lesson language, then search.</p></div>
 
     <p class="scope-note">
       Important: The Arabic option changes the teaching-video language only.
@@ -271,25 +274,20 @@
     </div>
   </section>
 
-  <!-- STUDY ASSISTANT PREVIEW -->
   <section class="assistant">
-    <div>
-      <span class="eyebrow">STUDY ASSISTANT</span>
-      <h2>Make difficult topics easier.</h2>
-      <p>
-        The study assistant is a planned feature. A secure server connection
-        will be required before it can answer live questions. Never put a
-        private AI API key in this public website.
-      </p>
+    <div><span class="eyebrow">STUDY ASSISTANT · OFFLINE BETA</span><h2>Get help with the lesson you are studying.</h2><p>This helper searches the notes and explanations currently open on this page. A full generative AI tutor is not connected yet; it needs a protected server. Your question stays in this browser and is not sent to an AI provider.</p></div>
+    <div class="chat-preview" id="studyAssistant"><div class="chat-title">✦ Study Assistant <small>Offline beta · lesson search</small></div>
+      <form id="assistantForm" class="assistant-form"><label for="assistantInput">Ask about the selected chapter</label><textarea id="assistantInput" maxlength="500" rows="3" placeholder="Example: What is photosynthesis?"></textarea><button class="btn primary small" type="submit">Ask the study helper</button></form>
+      <p id="assistantOutput" class="assistant-output" role="status" aria-live="polite">Select a chapter, open Notes or Definitions, and ask about a term or concept.</p>
+      <small class="assistant-safety">Study questions only. Obvious abusive language is blocked. Do not enter passwords or personal information.</small>
     </div>
-
-    <div class="chat-preview">
-      <div class="chat-title">✦ Study Assistant <small>Preview</small></div>
-      <p class="chat-bubble">Can you explain photosynthesis?</p>
-      <p class="chat-bubble reply">
-        Photosynthesis is how green plants use light energy to make food
-        from carbon dioxide and water.
-      </p>
+  </section>
+  <section class="section roadmap" id="comingSoon"><div class="section-title"><div><span class="eyebrow">COMING UP SOON</span><h2>What we are building next.</h2><p>The launch version is the starting library. New material will be added after matching it to the correct textbook and curriculum edition.</p></div></div>
+    <div class="roadmap-grid">
+      <article class="roadmap-card"><b>Grades 6–12 chapter libraries</b><p>Verified chapter lists, notes, definitions, diagrams, worked examples and answer sets for CBSE and Saudi pathways.</p><span>In progress</span></article>
+      <article class="roadmap-card"><b>More English and Arabic lessons</b><p>Chapter-matched video playlists for every available subject, with Arabic lessons clearly labelled when they are concept support rather than syllabus-matched.</p><span>Expanding</span></article>
+      <article class="roadmap-card"><b>Practice and exam preparation</b><p>Topic quizzes, midterm and final practice, marking guidance and more solved numericals.</p><span>Planned</span></article>
+      <article class="roadmap-card"><b>Secure AI tutor</b><p>A real AI chat with a protected server, study-only rules and stronger abuse filtering. No public API keys will be stored in the website.</p><span>Planned</span></article>
     </div>
   </section>
 
