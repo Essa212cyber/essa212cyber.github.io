@@ -1256,7 +1256,7 @@ const sshArabicGradePlaylists = {
 })();
 
  
-/* Add a contextual playback fallback note under any embedded lesson player. */
+/* Add a contextual playback fallback note without creating an observer loop. */
 (function(){
  const area=document.getElementById("chapterArea");
  if(!area)return;
@@ -1265,11 +1265,12 @@ const sshArabicGradePlaylists = {
   const existing=area.querySelector(".dynamic-video-help");
   if(!hasFrame){if(existing)existing.remove();return;}
   const note=existing||document.createElement("p");
-  note.className="video-refresh-note dynamic-video-help";
   const isArabic=document.documentElement.lang==="ar";
-  note.textContent=isArabic
+  const message=isArabic
    ? "إذا لم يظهر الفيديو أو لم يبدأ التشغيل، حدّث الصفحة (Ctrl+R). إذا استمرت المشكلة، استخدم رابط فتح الفيديو أو صفحة المصدر الموجودة أسفل المشغّل."
    : "If the video is blank or will not play, refresh this page (Ctrl+R). If the problem continues, use the video or source link below the player.";
+  if(note.textContent!==message) note.textContent=message;
+  note.className="video-refresh-note dynamic-video-help";
   if(!existing)area.appendChild(note);
  }
  const observer=new MutationObserver(refreshPlaybackHelp);
