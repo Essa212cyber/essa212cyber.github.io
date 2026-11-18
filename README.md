@@ -8,33 +8,35 @@
 ## Current features
 
 - Curriculum, grade, subject and lesson-language selectors.
-- CBSE Class 11 starter libraries with locally authored notes, definitions, practice questions and selected topic videos.
-- CBSE Grades 6–12 starter study sets for selected common subjects, with questions, definitions, worked explanations and lesson-finding links.
-- English video playlists embedded where a checked playlist is available; chapter search links for other subject and grade combinations.
-- Arabic video links for all grades and subjects. Verified individual Arabic lessons are linked directly; other topics open a focused YouTube search. Ain Doroos pages open directly because the official pages do not reliably allow iframe playback.
+- Selected CBSE Class 11 chapter libraries with locally authored notes, definitions, question sets and video resources.
+- CBSE Grades 6–12 starter study packs for selected subjects, including bilingual practice and revision examples. The content is not yet a complete chapter-by-chapter curriculum for every subject.
+- English video playlists embedded where a checked playlist is available, plus targeted chapter-search links for other combinations.
+- Arabic video players for selected verified individual clips and grade playlists. Other Arabic topics show focused video-search links; Arabic videos from other national curricula are labelled as supplementary, not CBSE-aligned.
+- Saudi Ministry textbook links and Ain Doroos lesson resources, with embeds only where a YouTube playlist is available.
 - Four study games: quick quiz, flashcards, true/false and matching pairs.
-- AI Study Tutor through a protected Netlify Function and Netlify AI Gateway. The browser never contains an AI API key.
+- AI Tutor with English/Arabic replies. It can answer school questions and ordinary age-appropriate general questions, while refusing unsafe or explicit requests.
+- AI Tutor runs through a protected Netlify Function and Netlify AI Gateway. No AI API key is placed in public JavaScript.
 - Attendance and marks calculators, study task list, focus timer and dark mode.
 
 ## Content accuracy and coverage
 
-This is an expanding beta, not a complete chapter-by-chapter library for every CBSE grade and subject.
+This is an expanding beta, not a complete textbook replacement.
 
 - The most developed local chapter notes and question banks are selected CBSE Class 11 subjects.
-- Grades 6–12 have starter practice sets for selected common subjects. Some optional/senior subjects show general study-skill prompts until subject-specific material is curated.
-- Video playlists and search results are supplementary. Check the title and topic against the current NCERT/CBSE textbook followed by your school.
-- The CBSE 2026–27 official curriculum page covers Classes IX–XII; Grades VI–VIII should be checked against the NCERT and school-prescribed materials.
-- AI replies can be inaccurate and should be checked against textbooks and teachers. Do not enter personal information in the tutor.
+- Grades 6–12 have starter practice sets for selected common subjects. Some subject/grade combinations still need a proper chapter list and chapter-specific question bank.
+- Playlist and search results are supplementary. Match every video and topic to the current textbook followed by your school.
+- Arabic videos from other national curricula are clearly labelled as supplementary rather than being presented as exact CBSE lessons.
+- Always compare revision material with the current textbook and your school's course plan.
 
 ## AI usage and safety
 
-The tutor runs in a Netlify Function and calls Netlify AI Gateway from the server. No API key is placed in public JavaScript. The function limits questions to 800 characters, limits response length, and applies a per-IP rate limit of four requests per minute.
+The AI Tutor calls Netlify AI Gateway from a server-side Function at `/api/study-tutor`. The browser does not receive a provider API key. The function limits prompt length and applies a per-IP rate limit of four requests per minute.
 
-Netlify AI Gateway usage consumes the site's Netlify credits. Netlify's Free plan currently includes 300 credits per month with a hard limit and no automatic recharge. Confirm the team's current plan and credit settings in Netlify before sharing the public AI tutor widely.
+AI requests use the Netlify team's AI credits. The team owner should review AI Features and credit usage before the public tutor is widely shared. AI responses can be inaccurate; check important answers with textbooks and teachers. Do not enter names, addresses, school IDs, passwords, or other private information.
 
-## Official curriculum and lesson sources
+## Official curriculum sources
 
-- CBSE curriculum 2026–27: https://cbseacademic.nic.in/curriculum_2027.html
+- CBSE Academic: https://cbseacademic.nic.in/
 - NCERT ePathshala: https://epathshala.nic.in/
 - Saudi Ministry study plans: https://www.moe.gov.sa/ar/education/general-education/study-plans
 - Saudi Ministry textbook catalogue: https://madrasatibeta.moe.gov.sa/books?Language=1
