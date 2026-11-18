@@ -240,7 +240,12 @@
           const g = gradeNow(), subject = subjectNow();
           const officialUrl = typeof sshGetAinPage === "function" ? sshGetAinPage("Saudi curriculum",g) : (ainPages[g] || "https://www.ientv.edu.sa/ar/doros");
           const queryUrl = youtubeSearch("عين دروس الصف " + g + " " + subject + " شرح");
-          target.innerHTML = '<div class="revision-banner"><b>مصادر الفيديو العربية · Arabic lesson sources</b><p>قد لا تسمح صفحة عين بالتشغيل داخل إطار مضمّن. افتح المصدر مباشرة من الزر أدناه. هذه دروس المنهج السعودي الرسمية وليست ترتيباً مطابقاً لمنهج CBSE.</p></div><div class="video-grid"><article class="video-card"><h4>عين دروس · دروس الصف ' + g + '</h4><p>المصدر الرسمي للدروس حسب الصف والمسار.</p>' + safeLink(officialUrl,"افتح دروس عين") + '</article><article class="video-card"><h4>بحث عن درس محدد</h4><p>افتح نتائج يوتيوب للمادة والصف المحددين.</p>' + safeLink(queryUrl,"ابحث عن فيديو عربي",true) + '</article></div>';
+          let playlist = "";
+          try { playlist = (typeof sshArabicGradePlaylists !== "undefined" && sshArabicGradePlaylists[String(g)]) || ""; } catch (_) {}
+          const player = playlist
+            ? '<article class="video-card"><h4>عين دروس · قائمة الصف ' + g + '</h4><p>قائمة تشغيل عربية مضمّنة. إذا لم يعمل مشغّل يوتيوب على جهازك، افتح قائمة التشغيل مباشرة.</p><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list=' + encodeURIComponent(playlist) + '" title="Ain Doroos grade ' + g + ' playlist" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' + safeLink("https://www.youtube.com/playlist?list=" + encodeURIComponent(playlist),"افتح قائمة التشغيل",true) + '</article>'
+            : '<article class="video-card"><h4>عين دروس · دروس الصف ' + g + '</h4><p>لا يتوفر حالياً رابط تشغيل مضمّن موثّق لهذا الصف؛ افتح المصدر الرسمي لمشاهدة الفيديوهات.</p>' + safeLink(officialUrl,"افتح دروس عين") + '</article>';
+          target.innerHTML = '<div class="revision-banner"><b>مصادر الفيديو العربية · Arabic lesson sources</b><p>تظهر قوائم التشغيل الموثّقة داخل الصفحة. قد تفتح صفحات عين الرسمية بشكل منفصل لأنها لا تسمح دائماً بالتضمين.</p></div><div class="video-grid">' + player + '<article class="video-card"><h4>بحث عن درس محدد</h4><p>افتح نتائج يوتيوب للمادة والصف المحددين.</p>' + safeLink(queryUrl,"ابحث عن فيديو عربي",true) + '</article></div>';
         }
       }
       return;
