@@ -588,3 +588,62 @@ body.dark .secondary {
 .video-refresh-note b{color:var(--navy)}
 .dark .video-refresh-note{background:#202e43;border-color:var(--line);color:var(--ink)}
 .dark .video-refresh-note b{color:#b9d0ff}
+
+
+/* ROYAL STUDY HUB THEME — midnight navy, warm ivory and antique gold */
+:root{
+  --bg:#f8f7f2;
+  --surface:#fffefa;
+  --ink:#1d2b49;
+  --muted:#6f7b8f;
+  --line:#e5dfd1;
+  --navy:#142448;
+  --blue:#9d7835;
+  --mint:#e9e1cc;
+  --purple:#eee9f4;
+  --shadow:0 16px 44px rgba(20,36,72,.085);
+}
+body{background:var(--bg);color:var(--ink)}
+.topbar{background:rgba(255,254,250,.96);border-bottom-color:#e2d8c1}
+.brandmark{background:linear-gradient(145deg,#e8d6a5,#b98b3b);color:#142448;box-shadow:0 4px 13px #14244820}
+.brand small{color:#a17d3d}
+.topbar nav{color:#4f5f79}
+.topbar nav a:hover{color:#9d7835}
+.primary-link,.btn.primary{background:linear-gradient(135deg,#1c3159,#122347);color:#fff;border:1px solid #bd9a52;box-shadow:0 5px 14px #14244820}
+.primary-link:hover,.btn.primary:hover{background:linear-gradient(135deg,#2a426d,#172b50)}
+.eyebrow{color:#a17d36}
+.hero{background:linear-gradient(125deg,#faf8f2 50%,#eee9dc)}
+.hero h1 em{color:#9f7b3d}
+.stats{background:linear-gradient(110deg,#101e3d,#1c3157);border-top:2px solid #c5a15a}
+.stats b{color:#e4cd91}
+.selector-panel,.chapter-panel,.chapter-area,.practice-card,.quiz-area,.tool-card{border-color:#e5dfd1;box-shadow:0 12px 34px rgba(18,35,68,.055)}
+.selector-panel select,.tool-card input{background:#fffefa;border-color:#ded6c4;color:#1d2b49}
+.chapter-button.active,.chapter-button:hover{background:#f1ebdc;color:#80602b}
+.chapter-tag{background:#efe7d1;color:#765a24;border:1px solid #dfc98c}
+.tab.active{background:#1b2e53;color:#f6ebcd}
+.revision-banner{background:linear-gradient(110deg,#f2ecdc,#f6f5ef);border:1px solid #e8dec6}
+.note{background:#f8f6ee;border-color:#e6dfd0}
+.practice-section{background:linear-gradient(130deg,#f1eee6,#eceff4)}
+.practice-card,.tool-card{border-radius:15px}
+.assistant{background:linear-gradient(120deg,#101e3d,#1b3158);border-top:2px solid #c4a05b}
+.assistant .eyebrow{color:#e2c985}
+.chat-preview{background:#1b3158;border:1px solid #627091}
+.roadmap{background:#f3f0e8}
+.roadmap-card{background:#fffefa;border-color:#e3dccb}
+.roadmap-card span{background:#f0e8d5;color:#715621}
+.scope-note{border-left-color:#b38b42;background:#f3efe5;color:#58657a}
+.btn.secondary{background:#eee8d9;color:#1a2c50}
+.ai-tutor-launch-card{display:grid;gap:10px;align-content:center;min-height:230px;padding:22px;border:1px solid #597096;border-radius:17px;background:linear-gradient(145deg,#203960,#142448);box-shadow:0 16px 38px #08152a40}
+.ai-tutor-launch-icon{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#f2e5c0,#bd9448);color:#17294d;display:grid;place-items:center;font-size:22px}
+.ai-tutor-launch-card h3{font:800 20px Manrope, sans-serif;margin:2px 0;color:#f5edda}
+.ai-tutor-launch-card p{color:#d3dceb;margin:0;font-size:13px;line-height:1.65}
+.ai-tutor-launch-card small{color:#b8c5d8;font-size:10px;line-height:1.5}
+.dark{--bg:#111a2c;--surface:#192640;--ink:#e9edf5;--muted:#a8b3c5;--line:#303d57;--navy:#e7d6ad;--blue:#e0c27c}
+.dark .hero{background:linear-gradient(120deg,#101827,#1a2942)}
+.dark .stats{background:#0b1730}
+.dark .practice-section{background:#131f32}
+.dark .roadmap{background:#111d30}
+.dark .roadmap-card{background:#18263b;border-color:#2a3a53}
+.dark .selector-panel select,.dark .tool-card input{background:#202e43;color:var(--ink);border-color:var(--line)}
+.dark .ai-tutor-launch-card{background:linear-gradient(145deg,#1a3158,#0e1b35)}
+@media(max-width:680px){.ai-tutor-launch-card{min-height:0;padding:19px}.topbar nav a[href="ai-tutor.html"]{display:inline-flex}}
