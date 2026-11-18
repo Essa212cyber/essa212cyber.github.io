@@ -60,6 +60,7 @@
     if (g === 12 && pathway() === "Health and Life Pathway") return "https://www.ientv.edu.sa/ar/node/347";
     if (g === 12 && pathway() === "Computer Science and Engineering Pathway") return "https://www.ientv.edu.sa/ar/node/348";
     if (g === 12 && pathway() === "Sharia Pathway") return "https://www.ientv.edu.sa/ar/node/350";
+    if (g === 12 && pathway() === "Business Administration Pathway") return "https://www.ientv.edu.sa/ar/doros/high-school";
     return ain[g] || "https://www.ientv.edu.sa/ar/doros";
   };
 
