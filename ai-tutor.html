@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Chat with the Saudi Student Hub AI Tutor in English or Arabic.">
+<title>AI Tutor | Saudi Student Hub</title><link rel="stylesheet" href="tutor.css">
+</head>
+<body class="tutor-page">
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top"><a class="side-brand" href="index-en.html"><span class="brand-icon">S</span><span><b>Saudi Student Hub</b><small>AI STUDY SPACE</small></span></a><button class="icon-button mobile-close" id="closeSidebar" type="button">×</button></div>
+  <button class="new-chat-button" id="newChat" type="button"><span>＋</span> New chat</button>
+  <div class="history-heading"><span>YOUR CHATS</span><span id="historyCount">0</span></div>
+  <div class="history-list" id="historyList" aria-label="Saved conversations"></div>
+  <div class="sidebar-bottom"><button class="sidebar-action" id="exportChat" type="button">⇩ Export current chat</button><button class="sidebar-action danger" id="clearHistory" type="button">⌫ Delete all history</button><a class="sidebar-home" href="index-en.html">← Back to Saudi Student Hub</a><p class="local-save-note">Chats are saved on this device only. They do not sync across devices.</p></div>
+</aside>
+<main class="chat-main">
+  <header class="chat-topbar"><div class="topbar-left"><button class="icon-button mobile-menu" id="openSidebar" type="button">☰</button><div class="page-identity"><span class="gold-dot"></span><span>AI Tutor <small>Saudi Student Hub</small></span></div></div>
+    <div class="topbar-actions"><label class="language-control"><span>Reply in</span><select id="answerLanguage"><option value="English">English</option><option value="Arabic">العربية</option></select></label><button class="icon-button" id="themeToggle" type="button">◐</button><a class="home-link" href="index-en.html">Home</a></div>
+  </header>
+  <section class="context-bar" aria-label="Optional learning context">
+    <label>Grade <select id="tutorGrade"><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option selected>11</option><option>12</option></select></label>
+    <label>Curriculum <select id="tutorCurriculum"><option>CBSE</option><option>Saudi curriculum</option><option>General question</option></select></label>
+    <label>Subject <select id="tutorSubject"><option>General question</option><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Mathematics</option><option>English</option><option>Arabic</option><option>Computer Science</option></select></label>
+  </section>
+  <section class="conversation-area" id="conversationArea">
+    <div class="welcome-panel" id="welcomePanel"><div class="welcome-emblem">✦</div><p class="eyebrow">YOUR LEARNING COMPANION</p><h1>What can I help you with?</h1><p class="welcome-copy">Ask about a school topic, explore an idea, practise a question, write or plan something, or ask a general question.</p>
+      <div class="prompt-cards"><button class="prompt-card" type="button" data-prompt="Explain the equilibrium constant Kc and Kp, with a worked example."><b>Explain a concept</b><span>Get a clear step-by-step explanation</span></button><button class="prompt-card" type="button" data-prompt="Give me five practice questions about photosynthesis, with answers at the end."><b>Practise a topic</b><span>Build confidence with examples</span></button><button class="prompt-card" type="button" data-prompt="Explain black holes in simple language."><b>Explore an idea</b><span>Ask general knowledge questions</span></button></div>
+    </div>
+    <div class="messages" id="messages" aria-live="polite"></div>
+  </section>
+  <footer class="composer-wrap"><form class="composer" id="chatForm"><textarea id="chatInput" rows="1" maxlength="3000" placeholder="Message your AI Tutor…" aria-label="Message your AI Tutor"></textarea><div class="composer-bottom"><span class="composer-hint">Enter to send · Shift + Enter for a new line</span><button class="send-button" id="sendButton" type="submit" aria-label="Send message">↑</button></div></form><p class="disclaimer">AI can make mistakes. Check important answers with your teacher or textbook. Do not enter passwords, contact details, school IDs or other private information. Chats are stored locally in this browser.</p></footer>
+</main>
+</div>
+<div class="mobile-scrim" id="mobileScrim"></div>
+<script src="tutor-app.js"></script>
+</body></html>
