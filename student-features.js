@@ -420,50 +420,15 @@
   games.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",()=>startGame(b.dataset.game)));
   startGame("quiz");
 
-  /* Replace the old offline-only assistant with a real Netlify AI Gateway tutor. */
+  /* The AI tutor lives on its own full-page chat screen. */
   const assistant=$("#studyAssistant");
   if(assistant){
-    const heading=$(".assistant h2"), intro=$(".assistant .assistant>p") || $(".assistant p");
-    if(heading)heading.textContent=tx("Ask your AI Study Tutor.","اسأل المعلّم الذكي.");
-    if(intro)intro.textContent=tx("Get step-by-step explanations, examples and practice in English or Arabic. The tutor uses the selected grade, subject and curriculum.","احصل على شرح خطوة بخطوة وأمثلة وتدريبات بالإنجليزية أو العربية. يستخدم المعلّم الصف والمادة والمنهج المحدد.");
+    const heading=document.querySelector(".assistant h2");
+    const intro=document.querySelector(".assistant .assistant p");
+    if(heading)heading.textContent=tx("Your AI Study Tutor.","معلّمك الذكي للدراسة.");
+    if(intro)intro.textContent=tx("Open a separate chat workspace with saved conversations, English and Arabic replies, readable equations, and general question support.","افتح مساحة محادثة مستقلة مع حفظ المحادثات ودعم العربية والإنجليزية والمعادلات الواضحة والأسئلة العامة.");
     assistant.innerHTML =
-      '<div class="chat-title">✦ ' + tx("AI Study Tutor","المعلّم الذكي") + ' <small>' + tx("Beta · English and Arabic","نسخة تجريبية · العربية والإنجليزية") + '</small></div>' +
-      '<div id="tutorChatLog" class="tutor-chat-log" aria-live="polite"><div class="tutor-message assistant">' + tx("Hello! Ask me to explain a topic, solve a practice example, or make a short revision quiz.","مرحباً! اسألني عن شرح موضوع أو حل مثال تدريبي أو إعداد اختبار مراجعة قصير.") + '</div></div>' +
-      '<div class="tutor-suggestions"><button type="button" data-tutor-suggest="Explain my current topic in simple steps."> ' + tx("Explain simply","اشرح ببساطة") + ' </button><button type="button" data-tutor-suggest="Give me 3 practice questions about this topic.">' + tx("Give practice questions","أعطني أسئلة تدريب") + '</button></div>' +
-      '<form id="sshAiTutorForm" class="tutor-form"><label for="sshTutorLanguage">' + tx("Answer language","لغة الإجابة") + '</label><select id="sshTutorLanguage"><option value="English" ' + (!isArabicPage?'selected':'') + '>English</option><option value="Arabic" ' + (isArabicPage?'selected':'') + '>العربية</option></select><label for="sshAiTutorInput">' + tx("Your school question","سؤالك الدراسي") + '</label><textarea id="sshAiTutorInput" maxlength="800" required placeholder="' + tx("Ask about your selected subject or topic…","اسأل عن المادة أو الموضوع المحدد…") + '"></textarea><button id="sshAiTutorSend" class="btn primary small" type="submit">' + tx("Ask AI Tutor","اسأل المعلّم الذكي") + '</button></form>' +
-      '<p class="tutor-note">' + tx("Do not enter your name, contact details, school ID, passwords or private information. AI can make mistakes; check important answers with your teacher and textbook. Questions are sent to Netlify's AI service. AI replies use your Netlify account credits; the Free plan currently includes 300 credits per month with a hard limit and no automatic recharge.","لا تدخل اسمك أو بيانات التواصل أو رقمك المدرسي أو كلمات المرور أو معلومات خاصة. قد يخطئ الذكاء الاصطناعي؛ تحقق من الإجابات المهمة مع معلمك وكتابك. تُرسل الأسئلة إلى خدمة الذكاء الاصطناعي في Netlify. تستهلك الإجابات رصيد حساب Netlify؛ تتضمن الخطة المجانية حالياً 300 رصيد شهرياً بحد صارم ودون إعادة شحن تلقائية.") + '</p>';
-    const log=$("#tutorChatLog"), input=$("#sshAiTutorInput"), form=$("#sshAiTutorForm"), send=$("#sshAiTutorSend");
-    const history=[];
-    function addMessage(role,text){
-      const message=document.createElement("div");message.className="tutor-message "+role;message.textContent=text;log.appendChild(message);log.scrollTop=log.scrollHeight;
-    }
-    assistant.querySelectorAll("[data-tutor-suggest]").forEach(b=>b.addEventListener("click",()=>{input.value=b.dataset.tutorSuggest;input.focus();}));
-    form.addEventListener("submit",async event=>{
-      event.preventDefault();
-      const question=input.value.trim();
-      if(question.length<2)return;
-      input.value="";input.disabled=true;send.disabled=true;send.textContent=tx("Thinking…","جارٍ التفكير…");
-      addMessage("user",question);
-      const thinking=document.createElement("div");thinking.className="tutor-message assistant";thinking.textContent=tx("Preparing an explanation…","جارٍ إعداد الشرح…");log.appendChild(thinking);
-      try{
-        const response=await fetch("/api/study-tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-          question,grade:gradeNow(),curriculum:curriculumNow(),subject:subjectNow(),chapter:chapterNow(),
-          language:$("#sshTutorLanguage")?.value||"English",history:history.slice(-6)
-        })});
-        const data=await response.json().catch(()=>({}));
-        thinking.remove();
-        if(!response.ok)throw new Error(data.error||tx("The tutor is temporarily unavailable.","المعلّم غير متاح مؤقتاً."));
-        const reply=String(data.reply||"").slice(0,3500);
-        addMessage("assistant",reply);
-        history.push({role:"user",content:question},{role:"assistant",content:reply});
-        if(history.length>8)history.splice(0,history.length-8);
-      }catch(error){
-        thinking.remove();
-        addMessage("assistant",error.message||tx("The tutor could not connect. Please try again later.","تعذر الاتصال بالمعلّم. حاول مرة أخرى لاحقاً."));
-      }finally{
-        input.disabled=false;send.disabled=false;send.textContent=tx("Ask AI Tutor","اسأل المعلّم الذكي");input.focus();
-      }
-    });
+      '<div class="ai-tutor-launch-card"><div class="ai-tutor-launch-icon">✦</div><h3>'+tx("A clearer space to ask anything.","مساحة أوضح لطرح أسئلتك.")+'</h3><p>'+tx("Start a new chat, return to saved conversations, or export an answer. Your chat history stays in this browser.","ابدأ محادثة جديدة أو ارجع إلى المحادثات المحفوظة أو صدّر إجابة. يبقى سجل المحادثات في هذا المتصفح.")+'</p><a class="btn primary" href="ai-tutor.html">'+tx("Open AI Tutor","افتح المعلّم الذكي")+' ↗</a><small>'+tx("AI can make mistakes. Do not enter personal or private information.","قد يخطئ الذكاء الاصطناعي. لا تدخل معلومات شخصية أو خاصة.")+'</small></div>';
   }
 
   // Ensure the language and curriculum selectors always refresh the current activity.
