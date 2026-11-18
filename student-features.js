@@ -117,17 +117,36 @@
           {title:"حلقة كالفن · Calvin cycle",desc:"شرح عربي لحلقة كالفن",id:"R6zbVz4h4yM"}
         ];
       }
+      // Embed verified individual clips for the detailed Class 11 topics.
+      // The other national-curriculum clips below are explicitly labelled as concept support.
+      const supplementalArabicVideos = {
+        "6": { Science: [{title:"شرح علوم الصف السادس · Grade 6 Science",desc:"Arabic-language concept lesson. Check it against your CBSE chapter.",id:"bFqlvj4QkZI",curriculum:"Supplementary · different national syllabus"}] },
+        "7": { Science: [{title:"شرح العلوم للصف السابع · Grade 7 Science",desc:"Arabic-language concept introduction. Check it against your CBSE chapter.",id:"nZA3OJkxa_g",curriculum:"Supplementary · different national syllabus"}] },
+        "8": { Science: [{title:"CBSE Arabic · Class 8 · Chapter 6",desc:"Arabic-language Chapter 6 explanation.",id:"Bar5_B2CYjk",curriculum:"CBSE-labelled source"}] },
+        "10": { Biology: [{title:"الأحياء · الصف العاشر · تطور الكائنات الحية",desc:"Arabic Biology explanation from Wated; not verified as CBSE-aligned.",id:"A5bcpHhKwXM",curriculum:"Supplementary · Jordanian syllabus"}] },
+        "12": { Chemistry: [{title:"شرح الكيمياء · الصف الثاني عشر",desc:"Arabic Chemistry revision; the publisher identifies it as Kuwaiti curriculum, not CBSE.",id:"YwvXb9Hx77U",curriculum:"Supplementary · Kuwaiti syllabus"}] }
+      };
+      if (!known.length && supplementalArabicVideos[String(g)]?.[subject]) {
+        known = supplementalArabicVideos[String(g)][subject];
+      }
+
+      let arabicPlaylist = "";
+      try {
+        arabicPlaylist = (typeof sshArabicGradePlaylists !== "undefined" && sshArabicGradePlaylists[String(g)]) || "";
+      } catch (_) {}
       const knownMarkup = known.map(v =>
-        '<article class="video-card"><h4>' + v.title + '</h4><p>' + v.desc + '</p>' +
-        safeLink("https://www.youtube.com/watch?v=" + encodeURIComponent(v.id), tx("Watch on YouTube","شاهد على يوتيوب")) + '</article>'
+        '<article class="video-card"><h4>' + v.title + '</h4><p>' + v.desc + '</p><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(v.id) + '" title="' + v.title.replace(/"/g,"&quot;") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note">' + (v.curriculum ? v.curriculum + ' · ' : '') + safeLink("https://www.youtube.com/watch?v=" + encodeURIComponent(v.id), tx("Open on YouTube","افتح على يوتيوب"),true) + '</p></article>'
       ).join("");
+      const playlistMarkup = arabicPlaylist
+        ? '<article class="video-card"><h4>' + tx("Arabic grade playlist · Ain Doroos","قائمة دروس الصف بالعربية · عين دروس") + '</h4><p>' + tx("Official Saudi school lesson playlist. This is supplementary for CBSE and may follow a different syllabus.","قائمة دروس مدرسية سعودية رسمية. وهي مصدر مساعد لطلاب CBSE وقد تتبع منهجاً مختلفاً.") + '</p><iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list=' + encodeURIComponent(arabicPlaylist) + '" title="Ain Doroos Arabic grade ' + g + ' playlist" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p class="video-note">' + safeLink("https://www.youtube.com/playlist?list=" + encodeURIComponent(arabicPlaylist),tx("Open playlist on YouTube","افتح قائمة التشغيل على يوتيوب"),true) + '</p></article>'
+        : "";
       return '<div class="revision-banner"><b>' + tx("Arabic video resources","مصادر الفيديو باللغة العربية") + '</b><p>' +
-        tx("Ain Doroos pages do not reliably allow embedded playback. These links open the video source directly instead of showing a blank player. Arabic explanations are supplementary and may not follow the CBSE chapter sequence.","لا تسمح صفحات عين دروس دائماً بالتشغيل داخل إطار مضمّن. تفتح هذه الروابط مصدر الفيديو مباشرة بدلاً من إظهار مشغّل فارغ. الشروحات العربية مساندة وقد لا تتبع ترتيب فصول CBSE.") +
+        tx("Available clips and playlists now appear in the player below. Where no chapter-matched Arabic clip has been verified, use the topic search. Arabic lessons from another country's curriculum are labelled as supplementary, not CBSE syllabus lessons.","تظهر المقاطع وقوائم التشغيل المتاحة داخل المشغّل أدناه. عند عدم توفر شرح عربي مطابق للفصل، استخدم البحث عن الموضوع. وتُوسم دروس المناهج الأخرى بأنها مواد مساندة وليست دروساً مطابقة لمنهج CBSE.") +
         '</p></div>' +
-        (knownMarkup ? '<div class="video-grid">' + knownMarkup + '</div>' : '') +
+        ((knownMarkup || playlistMarkup) ? '<div class="video-grid">' + knownMarkup + playlistMarkup + '</div>' : '') +
         '<div class="video-grid">' +
-        '<article class="video-card"><h4>' + tx("Search this CBSE topic in Arabic","ابحث عن هذا الموضوع من CBSE بالعربية") + '</h4><p>' + tx("Opens YouTube results for your selected grade, subject and topic. Check the video title against your textbook.","يفتح نتائج يوتيوب للصف والمادة والموضوع المختار. طابق عنوان الفيديو مع كتابك المدرسي.") + '</p>' + safeLink(resultsUrl,tx("Find Arabic videos","ابحث عن فيديوهات عربية")) + '</article>' +
-        '<article class="video-card"><h4>Ain Doroos · عين دروس</h4><p>' + tx("Official Saudi Ministry lesson videos are useful for Arabic concept support, but their syllabus is not the CBSE syllabus.","فيديوهات عين دروس الرسمية من وزارة التعليم السعودية مفيدة لدعم فهم المفاهيم بالعربية، لكنها لا تمثل منهج CBSE.") + '</p>' + safeLink(officialUrl,tx("Open official grade lessons","افتح دروس الصف الرسمية"),true) + '</article>' +
+        '<article class="video-card"><h4>' + tx("Search this CBSE topic in Arabic","ابحث عن هذا الموضوع من CBSE بالعربية") + '</h4><p>' + tx("Use the exact topic name and check the lesson against your textbook.","استخدم اسم الموضوع بدقة وطابق الدرس مع كتابك المدرسي.") + '</p>' + safeLink(resultsUrl,tx("Find Arabic videos","ابحث عن فيديوهات عربية")) + '</article>' +
+        '<article class="video-card"><h4>Ain Doroos · عين دروس</h4><p>' + tx("Official Saudi Ministry lesson pages open separately because their website blocks reliable embedding.","تُفتح صفحات دروس وزارة التعليم السعودية بشكل منفصل لأن الموقع لا يسمح بالتضمين بشكل موثوق.") + '</p>' + safeLink(officialUrl,tx("Open official grade lessons","افتح دروس الصف الرسمية"),true) + '</article>' +
         '</div>';
     }
 
@@ -300,13 +319,22 @@
     ".flashcard-face{border-radius:16px;border:1px solid var(--border,#d9e0e8);padding:28px 18px;min-height:130px;display:grid;place-items:center;text-align:center;margin:15px 0;background:var(--surface,#f7f8fa)}",
     ".match-card.selected{border-color:var(--accent,#5278bc);box-shadow:0 0 0 2px rgba(82,120,188,.18)}",
     ".match-card.matched{background:var(--surface,#eaf7ef);border-color:#68a77c}",
-    ".tutor-message{padding:12px 14px;border-radius:14px;margin:9px 0;white-space:pre-wrap;line-height:1.6;max-width:95%}",
-    ".tutor-message.user{background:var(--surface,#edf3fb);margin-inline-start:auto}",
-    ".tutor-message.assistant{background:var(--card,#fff);border:1px solid var(--border,#d9e0e8)}",
-    ".tutor-chat-log{max-height:380px;overflow:auto;padding:4px 0}",
-    ".tutor-form textarea{width:100%;min-height:90px;margin:9px 0;padding:12px;border-radius:12px;border:1px solid var(--border,#d9e0e8);font:inherit}",
-    ".tutor-form button{margin-top:5px}",
-    ".tutor-note{font-size:.84rem;opacity:.75;margin-top:10px}",
+    ".tutor-chat-log{min-height:84px;max-height:360px;overflow:auto;padding:12px;margin:12px 0;background:#123e36;border:1px solid #3b7568;border-radius:14px}",
+    ".tutor-message{display:block;width:fit-content;max-width:96%;padding:12px 14px;border-radius:14px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;font-size:14px}",
+    ".tutor-message.user{background:#dceaff;color:#18304e;margin-inline-start:auto}",
+    ".tutor-message.assistant{background:#e3f1ec;color:#153a32;border:1px solid #b7d5ca;margin-inline-end:auto}",
+    ".tutor-form{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;margin:16px 0}",
+    ".tutor-form label{display:block;width:100%;color:#e1f1ec;font-size:13px;font-weight:800;line-height:1.4;margin:5px 0 0}",
+    ".tutor-form select,.tutor-form textarea{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;margin:0;padding:13px 14px;border-radius:12px;border:1px solid #5a897e;background:#103c34;color:#fff;color-scheme:dark;font:inherit;font-size:14px;line-height:1.55}",
+    ".tutor-form select{min-height:48px;cursor:pointer}",
+    ".tutor-form textarea{min-height:112px;resize:vertical}",
+    ".tutor-form textarea::placeholder{color:#b9d0ca;opacity:1}",
+    ".tutor-form select:focus-visible,.tutor-form textarea:focus-visible{outline:3px solid #8ce0bd;outline-offset:2px;border-color:#8ce0bd}",
+    ".tutor-form button{justify-self:start;min-width:150px;margin-top:5px}",
+    ".tutor-note{font-size:.84rem;color:#c7ded7;opacity:1;line-height:1.65;margin-top:12px}",
+    ".tutor-suggestions button{background:#174b43;color:#f1fbf7;border-color:#5d9487}",
+    ".tutor-suggestions button:hover{background:#226154}",
+    "@media(max-width:600px){.tutor-chat-log{max-height:300px;padding:9px}.tutor-form textarea{min-height:100px}.tutor-message{max-width:100%}}",
     ".tutor-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}",
     ".tutor-suggestions button{border:1px solid var(--border,#d9e0e8);background:transparent;border-radius:999px;padding:8px 11px;cursor:pointer;color:inherit}",
     "@media(max-width:760px){.game-select-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-options,.match-grid{grid-template-columns:1fr}}"
