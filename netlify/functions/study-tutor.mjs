@@ -30,8 +30,8 @@ export default async function studyTutor(request) {
     content: cleanText(item?.content, 1200)
   })).filter(item => item.content.length > 0) : [];
 
-  const apiKey = process.env.OPENAI_API_KEY || process.env.NETLIFY_AI_GATEWAY_KEY;
-  const baseUrl = process.env.OPENAI_BASE_URL || process.env.NETLIFY_AI_GATEWAY_BASE_URL;
+  const apiKey = process.env.OPENAI_API_KEY;
+  const baseUrl = process.env.OPENAI_BASE_URL;
   if (!apiKey || !baseUrl) {
     return json({
       error: "The AI service is not available yet. Check that Netlify AI Features are enabled for this site and that the latest production deploy is published."
