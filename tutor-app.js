@@ -85,6 +85,7 @@
     const contentBox=document.createElement("div");contentBox.className="message-content";
     const label=document.createElement("div");label.className="message-label";label.textContent=role==="assistant"?"AI TUTOR":"YOU";
     const body=document.createElement("div");body.className="message-body";
+    body.dir=/[\\u0600-\\u06FF]/.test(content)?"rtl":"ltr";
     renderMarkdown(body,content);
     contentBox.append(label,body);row.append(avatar,contentBox);messagesEl.append(row);
     if(actions&&role==="assistant"){
@@ -100,7 +101,7 @@
 
   function formatLatex(value) {
     const sub={a:"ₐ",e:"ₑ",h:"ₕ",i:"ᵢ",j:"ⱼ",k:"ₖ",l:"ₗ",m:"ₘ",n:"ₙ",o:"ₒ",p:"ₚ",r:"ᵣ",s:"ₛ",t:"ₜ",u:"ᵤ",v:"ᵥ",x:"ₓ",0:"₀",1:"₁",2:"₂",3:"₃",4:"₄",5:"₅",6:"₆",7:"₇",8:"₈",9:"₉","+":"₊","-":"₋"};
-    const sup={0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹","+":"⁺","-":"⁻",n:"ⁿ",i:"ⁱ"};
+    const sup={0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹","+":"⁺","-":"⁻",n:"ⁿ",i:"ⁱ",a:"ᵃ",b:"ᵇ",c:"ᶜ",d:"ᵈ",m:"ᵐ"};
     let s=String(value);
     s=s.replace(/\\(?:dfrac|tfrac|frac)\{([^{}]+)\}\{([^{}]+)\}/g,"($1) / ($2)");
     s=s.replace(/\\text\{([^{}]+)\}|\\mathrm\{([^{}]+)\}/g,(_,a,b)=>a||b);
@@ -200,8 +201,8 @@
   }
   function closeSidebar(){document.body.classList.remove("sidebar-open");}
   function scrollToBottom(){requestAnimationFrame(()=>{$("conversationArea").scrollTop=$("conversationArea").scrollHeight;});}
-  function appendSavedMessage(role,content) {
-    const item=current();if(!item)return;
+  function appendSavedMessage(role,content,targetId=activeId) {
+    const item=conversations.find(c=>c.id===targetId);if(!item)return;
     item.messages.push({role,content});item.updated=Date.now();
     if(role==="user"&&item.title==="New chat")item.title=titleFromQuestion(content);
     saveConversations();
@@ -236,7 +237,7 @@
       if(!response.ok)throw new Error(data.error||"The AI Tutor could not answer right now.");
       const reply=String(data.reply||"").trim();
       if(!reply)throw new Error("The AI Tutor returned an empty answer. Please try again.");
-      appendSavedMessage("assistant",reply);renderConversation();
+      appendSavedMessage("assistant",reply,item.id);if(activeId===item.id)renderConversation();else renderHistory();
     }catch(error){
       thinking.remove();
       const message=error.message||"The connection failed. Please try again.";
@@ -264,6 +265,7 @@
     try{localStorage.setItem(THEME_KEY,document.body.classList.contains("dark")?"dark":"light");}catch(_){}
   });
   if(localStorage.getItem(THEME_KEY)==="dark")document.body.classList.add("dark");
+  if(new URLSearchParams(location.search).get("lang")==="ar")$("answerLanguage").value="Arabic";
 
   form.addEventListener("submit",event=>{event.preventDefault();const q=input.value;input.value="";resizeInput();sendMessage(q);});
   input.addEventListener("keydown",event=>{
