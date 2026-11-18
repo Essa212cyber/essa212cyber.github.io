@@ -89,12 +89,16 @@
     }
   };
 
+  const generalStudyPack = [
+    {topic:"Check the course plan",term:"Prescribed textbook",termAr:"الكتاب المقرر",definition:"The current textbook and teacher's course plan identify the topics and depth required for your class.",definitionAr:"يحدد الكتاب الحالي وخطة المعلم الموضوعات والتفاصيل المطلوبة لصفك.",q:"Which source should confirm the exact chapters for your current class?",qAr:"ما المصدر الذي يؤكد الفصول المطلوبة لصفك الحالي؟",opts:["The current prescribed textbook and school plan","A random online video","An old syllabus from another year","A social media comment"],optsAr:["الكتاب المقرر الحالي وخطة المدرسة","فيديو عشوائي على الإنترنت","منهج قديم من سنة أخرى","تعليق في وسائل التواصل"],a:0,why:"Schools can use different editions and subject combinations, so check the current prescribed materials.",whyAr:"قد تستخدم المدارس إصدارات ومجموعات مواد مختلفة، لذلك تحقق من المواد المقررة حالياً.",fact:"The current textbook is the best reference for exact chapter order.",factAr:"الكتاب الحالي هو المرجع الأفضل لمعرفة ترتيب الفصول بدقة.",wrong:"An old syllabus always matches every current class.",wrongAr:"يتطابق المنهج القديم دائماً مع كل صف حالي."},
+    {topic:"Build a revision plan",term:"Active recall",termAr:"الاسترجاع النشط",definition:"Active recall means trying to remember an idea before checking your notes.",definitionAr:"يعني الاسترجاع النشط محاولة تذكر الفكرة قبل مراجعة الملاحظات.",q:"Which action is an example of active recall?",qAr:"أي فعل يُعد مثالاً على الاسترجاع النشط؟",opts:["Close the book and explain the idea from memory","Read the same paragraph without a pause","Copy a page without thinking","Highlight every sentence"],optsAr:["أغلق الكتاب واشرح الفكرة من الذاكرة","اقرأ الفقرة نفسها دون توقف","انسخ صفحة دون تفكير","ظلّل كل الجمل"],a:0,why:"Retrieving information strengthens learning and shows what needs more revision.",whyAr:"يساعد استرجاع المعلومات على ترسيخ التعلم ويكشف ما يحتاج إلى مراجعة.",fact:"Active recall involves retrieving information from memory.",factAr:"يتضمن الاسترجاع النشط استعادة المعلومات من الذاكرة.",wrong:"Active recall means copying notes word for word.",wrongAr:"يعني الاسترجاع النشط نسخ الملاحظات حرفياً."}
+  ];
   function choosePack() {
     const g = gradeNow();
     const band = g <= 8 ? "6-8" : g <= 10 ? "9-10" : "11-12";
     const source = packs[band] || packs["6-8"];
     const subject = subjectNow();
-    return source[subject] || source.Science || Object.values(source)[0];
+    return source[subject] || generalStudyPack;
   }
 
   function renderVideoResources(chapterTitle, detailed = false) {
@@ -207,8 +211,18 @@
   function renderPage() {
     if (curriculumNow() !== "CBSE") {
       previousRender();
+      if (videoLanguage() === "Arabic" && activeTab === "videos") {
+        const target = $("#sshSaudiTab") || $("#tabContent");
+        if (target) {
+          const g = gradeNow(), subject = subjectNow();
+          const officialUrl = typeof sshGetAinPage === "function" ? sshGetAinPage("Saudi curriculum",g) : (ainPages[g] || "https://www.ientv.edu.sa/ar/doros");
+          const queryUrl = youtubeSearch("عين دروس الصف " + g + " " + subject + " شرح");
+          target.innerHTML = '<div class="revision-banner"><b>مصادر الفيديو العربية · Arabic lesson sources</b><p>قد لا تسمح صفحة عين بالتشغيل داخل إطار مضمّن. افتح المصدر مباشرة من الزر أدناه. هذه دروس المنهج السعودي الرسمية وليست ترتيباً مطابقاً لمنهج CBSE.</p></div><div class="video-grid"><article class="video-card"><h4>عين دروس · دروس الصف ' + g + '</h4><p>المصدر الرسمي للدروس حسب الصف والمسار.</p>' + safeLink(officialUrl,"افتح دروس عين") + '</article><article class="video-card"><h4>بحث عن درس محدد</h4><p>افتح نتائج يوتيوب للمادة والصف المحددين.</p>' + safeLink(queryUrl,"ابحث عن فيديو عربي",true) + '</article></div>';
+        }
+      }
       return;
     }
+    if (typeof sshUpdateSubjectOptions === "function") sshUpdateSubjectOptions();
     const g = gradeNow(), subject = subjectNow();
     const detailedClass11 = g === 11 && (subject === "Chemistry" || (typeof extraSubjects !== "undefined" && !!extraSubjects[subject]));
     if (!detailedClass11) {
