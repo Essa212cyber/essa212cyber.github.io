@@ -123,7 +123,7 @@
         "6": { Science: [{title:"شرح علوم الصف السادس · Grade 6 Science",desc:"Arabic-language concept lesson. Check it against your CBSE chapter.",id:"bFqlvj4QkZI",curriculum:"Supplementary · different national syllabus"}] },
         "7": { Science: [{title:"شرح العلوم للصف السابع · Grade 7 Science",desc:"Arabic-language concept introduction. Check it against your CBSE chapter.",id:"nZA3OJkxa_g",curriculum:"Supplementary · different national syllabus"}] },
         "8": { Science: [{title:"CBSE Arabic · Class 8 · Chapter 6",desc:"Arabic-language Chapter 6 explanation.",id:"Bar5_B2CYjk",curriculum:"CBSE-labelled source"}] },
-        "10": { Biology: [{title:"الأحياء · الصف العاشر · تطور الكائنات الحية",desc:"Arabic Biology explanation from Wated; not verified as CBSE-aligned.",id:"A5bcpHhKwXM",curriculum:"Supplementary · Jordanian syllabus"}] },
+        "10": { Science: [{title:"الأحياء · الصف العاشر · تطور الكائنات الحية",desc:"Arabic Biology concept lesson from Wated; not verified as CBSE-aligned. Use it only if the topic matches your textbook.",id:"A5bcpHhKwXM",curriculum:"Supplementary · different national syllabus"}] },
         "12": { Chemistry: [{title:"شرح الكيمياء · الصف الثاني عشر",desc:"Arabic Chemistry revision; the publisher identifies it as Kuwaiti curriculum, not CBSE.",id:"YwvXb9Hx77U",curriculum:"Supplementary · Kuwaiti syllabus"}] }
       };
       if (!known.length && supplementalArabicVideos[String(g)]?.[subject]) {
