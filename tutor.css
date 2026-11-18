@@ -20,3 +20,12 @@ body.dark{--paper:#111a2c;--paper-2:#19243b;--ink:#e9edf5;--muted:#a8b3c5;--line
 .message-body .math-inline,.message-body .math-block{direction:ltr;unicode-bidi:isolate;text-align:center}
 .message-body[dir="rtl"] ul,.message-body[dir="rtl"] ol{padding-inline-start:24px;padding-inline-end:0}
 .message-body[dir="rtl"] blockquote{border-inline-start:0;border-inline-end:3px solid var(--gold)}
+
+.message-body .answer-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;overflow:hidden;border-radius:9px}
+.message-body .answer-table th{background:#e9dfc8;color:#24365a;text-align:left;font-weight:800}
+.message-body .answer-table th,.message-body .answer-table td{border:1px solid #e4dccb;padding:8px 10px;vertical-align:top}
+.message-body .answer-table tr:nth-child(even) td{background:#f8f5ed}
+body.dark .message-body .answer-table th{background:#394867;color:#f0dfb6}
+body.dark .message-body .answer-table th,body.dark .message-body .answer-table td{border-color:#45536e}
+body.dark .message-body .answer-table tr:nth-child(even) td{background:#202e49}
+.message-body hr{border:0;border-top:1px solid var(--line);margin:14px 0}
