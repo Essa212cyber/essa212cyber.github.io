@@ -166,6 +166,20 @@
       }
       const heading=line.match(/^(#{1,4})\s+(.+)$/);
       if(heading){const el=document.createElement("h"+heading[1].length);appendInline(el,heading[2]);root.append(el);i++;continue;}
+      if(line.includes("|") && i+1<lines.length && /^[\s|:-]+$/.test(lines[i+1].trim()) && lines[i+1].includes("-")){
+        const cells=value=>value.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim());
+        const table=document.createElement("table");table.className="answer-table";
+        const thead=document.createElement("thead"),headRow=document.createElement("tr");
+        cells(line).forEach(value=>{const th=document.createElement("th");appendInline(th,value);headRow.append(th);});
+        thead.append(headRow);table.append(thead);i+=2;
+        const tbody=document.createElement("tbody");
+        while(i<lines.length && lines[i].includes("|") && lines[i].trim()){
+          const row=document.createElement("tr");
+          cells(lines[i]).forEach(value=>{const td=document.createElement("td");appendInline(td,value);row.append(td);});
+          tbody.append(row);i++;
+        }
+        table.append(tbody);root.append(table);continue;
+      }
       if(/^([-*_])\1\1+$/.test(line)){root.append(document.createElement("hr"));i++;continue;}
       if(/^>\s?/.test(line)){const quote=document.createElement("blockquote");appendInline(quote,line.replace(/^>\s?/,""));root.append(quote);i++;continue;}
       const unordered=line.match(/^[-*+]\s+(.+)$/),ordered=line.match(/^\d+[.)]\s+(.+)$/);
