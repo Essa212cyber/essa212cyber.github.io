@@ -1,39 +1,36 @@
 # Saudi Student Hub
 
-A free GitHub Pages learning and student productivity website.
+**Public website:** https://saudistudenthub.netlify.app/
 
-## Public pages
+- English page: https://saudistudenthub.netlify.app/index-en.html
+- Arabic page: https://saudistudenthub.netlify.app/index.html
 
-- English: https://essa212cyber.github.io/saudi-student-hub/index-en.html
-- Arabic: https://essa212cyber.github.io/saudi-student-hub/index.html
-
-## Current beta features
+## Current features
 
 - Curriculum, grade, subject and lesson-language selectors.
-- CBSE Grade 11 starter libraries, including Biology, Chemistry, Physics, Mathematics and English.
-- Saudi curriculum pathway selector with links to official Ministry textbook and IEN lesson sources.
-- Embedded video playlists and direct links to the source when embedded playback is blocked.
-- Search/apply button with a result status message.
+- CBSE Class 11 starter libraries with chapter notes, definitions, question sets and selected embedded videos.
+- English supplementary video playlists for selected Grades 6–12 subjects where a playlist has been checked.
+- Arabic lesson access through official Saudi Ain Doroos grade and pathway pages.
+- Saudi curriculum resource navigation for Grades 6–12:
+  - Official textbook links for Grades 6–10.
+  - Secondary pathway selection for Grades 11–12.
+  - Links to the Ministry's textbook catalogue and official study plans.
 - Attendance and marks calculators, study task list, focus timer and dark mode.
 - Offline study helper that searches the currently open lesson; it is not a generative AI service.
-- English and Arabic playback-recovery instructions: refresh the page, then use the source link below the player.
 
-## Content status
+## Content accuracy and coverage
 
-The site is a beta, not a complete Grades 6–12 content library. Some grade/subject combinations intentionally show a preparation notice rather than guessed chapter lists, notes, answers or video links.
+This website is an expanding beta, not a complete chapter-by-chapter library for every subject and grade.
 
-CBSE Grade 11 course outlines are checked against the official 2026–27 curriculum. Saudi secondary materials must be matched to the selected Ministry pathway and textbook edition before they are presented as chapter-complete.
-
-## Safety and privacy notes
-
-- The public pages load the site's own `script.js`; they do not require a public AI API key.
-- The offline study helper does not transmit questions to an AI provider.
-- Student task text is rendered as text, not interpreted as HTML.
-- Lesson videos are embedded from third-party publishers. Their availability, playback restrictions and content are controlled by those publishers.
-- No client-side moderation filter is perfect. Do not enter passwords, identity details or other private information into the public website.
+- The most developed local notes and question banks are selected CBSE Class 11 subjects.
+- For other CBSE grades, available lesson playlists and course-catalogue links are provided where checked; missing subjects are not represented as complete.
+- Saudi curriculum pages link students to the Ministry's approved textbook catalogue and Ain Doroos. Secondary coursebooks vary by pathway, term and school.
+- General revision prompts are study guidance, not a claim that a full chapter-specific question bank has been published.
+- Always compare revision material with the current textbook and the course followed by your school.
 
 ## Official curriculum sources
 
-- CBSE curriculum 2026–27: https://cbseacademic.nic.in/curriculum_2027.html
-- Saudi Ministry textbook catalogue: https://madrasatibeta.moe.gov.sa/books?Language=2
-- IEN Arabic lesson directory: https://www.ientv.edu.sa/ar/doros
+- Saudi Ministry of Education study plans: https://www.moe.gov.sa/ar/education/general-education/study-plans
+- Saudi Ministry textbook catalogue: https://madrasatibeta.moe.gov.sa/books?Language=1
+- Saudi Ain Doroos lesson directory: https://www.ientv.edu.sa/ar/doros
+- CBSE Academic: https://cbseacademic.nic.in/
