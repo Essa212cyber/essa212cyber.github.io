@@ -397,7 +397,7 @@
       '<div class="chat-title">✦ ' + tx("AI Study Tutor","المعلّم الذكي") + ' <small>' + tx("Beta · English and Arabic","نسخة تجريبية · العربية والإنجليزية") + '</small></div>' +
       '<div id="tutorChatLog" class="tutor-chat-log" aria-live="polite"><div class="tutor-message assistant">' + tx("Hello! Ask me to explain a topic, solve a practice example, or make a short revision quiz.","مرحباً! اسألني عن شرح موضوع أو حل مثال تدريبي أو إعداد اختبار مراجعة قصير.") + '</div></div>' +
       '<div class="tutor-suggestions"><button type="button" data-tutor-suggest="Explain my current topic in simple steps."> ' + tx("Explain simply","اشرح ببساطة") + ' </button><button type="button" data-tutor-suggest="Give me 3 practice questions about this topic.">' + tx("Give practice questions","أعطني أسئلة تدريب") + '</button></div>' +
-      '<form id="sshAiTutorForm" class="tutor-form"><label for="sshAiTutorInput">' + tx("Your school question","سؤالك الدراسي") + '</label><textarea id="sshAiTutorInput" maxlength="800" required placeholder="' + tx("Ask about your selected subject or topic…","اسأل عن المادة أو الموضوع المحدد…") + '"></textarea><button id="sshAiTutorSend" class="btn primary small" type="submit">' + tx("Ask AI Tutor","اسأل المعلّم الذكي") + '</button></form>' +
+      '<form id="sshAiTutorForm" class="tutor-form"><label for="sshTutorLanguage">' + tx("Answer language","لغة الإجابة") + '</label><select id="sshTutorLanguage"><option value="English" ' + (!isArabicPage?'selected':'') + '>English</option><option value="Arabic" ' + (isArabicPage?'selected':'') + '>العربية</option></select><label for="sshAiTutorInput">' + tx("Your school question","سؤالك الدراسي") + '</label><textarea id="sshAiTutorInput" maxlength="800" required placeholder="' + tx("Ask about your selected subject or topic…","اسأل عن المادة أو الموضوع المحدد…") + '"></textarea><button id="sshAiTutorSend" class="btn primary small" type="submit">' + tx("Ask AI Tutor","اسأل المعلّم الذكي") + '</button></form>' +
       '<p class="tutor-note">' + tx("Do not enter your name, contact details, school ID, passwords or private information. AI can make mistakes; check important answers with your teacher and textbook. Questions are sent to Netlify's AI service. AI replies use your Netlify account credits; the Free plan currently includes 300 credits per month with a hard limit and no automatic recharge.","لا تدخل اسمك أو بيانات التواصل أو رقمك المدرسي أو كلمات المرور أو معلومات خاصة. قد يخطئ الذكاء الاصطناعي؛ تحقق من الإجابات المهمة مع معلمك وكتابك. تُرسل الأسئلة إلى خدمة الذكاء الاصطناعي في Netlify. تستهلك الإجابات رصيد حساب Netlify؛ تتضمن الخطة المجانية حالياً 300 رصيد شهرياً بحد صارم ودون إعادة شحن تلقائية.") + '</p>';
     const log=$("#tutorChatLog"), input=$("#sshAiTutorInput"), form=$("#sshAiTutorForm"), send=$("#sshAiTutorSend");
     const history=[];
@@ -415,7 +415,7 @@
       try{
         const response=await fetch("/api/study-tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
           question,grade:gradeNow(),curriculum:curriculumNow(),subject:subjectNow(),chapter:chapterNow(),
-          language:videoLanguage(),history:history.slice(-6)
+          language:$("#sshTutorLanguage")?.value||"English",history:history.slice(-6)
         })});
         const data=await response.json().catch(()=>({}));
         thinking.remove();
