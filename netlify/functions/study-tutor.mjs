@@ -15,7 +15,7 @@ export default async function studyTutor(request) {
   try { body = await request.json(); }
   catch { return json({ error: "The request was not valid JSON." }, 400); }
 
-  const question = cleanText(body?.question, 800);
+  const question = cleanText(body?.question, 3000);
   if (question.length < 2) return json({ error: "Please enter a school question." }, 400);
 
   const grade = Number(body?.grade);
@@ -25,13 +25,13 @@ export default async function studyTutor(request) {
   const curriculum = cleanText(body?.curriculum, 40) || "CBSE";
   const subject = cleanText(body?.subject, 80) || "General study";
   const chapter = cleanText(body?.chapter, 120);
-  const history = Array.isArray(body?.history) ? body.history.slice(-6).map(item => ({
+  const history = Array.isArray(body?.history) ? body.history.slice(-12).map(item => ({
     role: item?.role === "assistant" ? "assistant" : "user",
-    content: cleanText(item?.content, 500)
+    content: cleanText(item?.content, 1200)
   })).filter(item => item.content.length > 0) : [];
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  const baseUrl = process.env.OPENAI_BASE_URL;
+  const apiKey = process.env.OPENAI_API_KEY || process.env.NETLIFY_AI_GATEWAY_KEY;
+  const baseUrl = process.env.OPENAI_BASE_URL || process.env.NETLIFY_AI_GATEWAY_BASE_URL;
   if (!apiKey || !baseUrl) {
     return json({
       error: "The AI service is not available yet. Check that Netlify AI Features are enabled for this site and that the latest production deploy is published."
@@ -48,7 +48,9 @@ export default async function studyTutor(request) {
     "Support learning and honest work. You may show worked examples, explain methods, brainstorm ideas, review writing, and help with harmless everyday tasks.",
     "Keep all answers age-appropriate. Do not provide sexual or explicit content, instructions facilitating violence or weapons, dangerous activities, self-harm, substance use, or other harmful conduct. If asked for such help, briefly decline and offer a safe, relevant alternative.",
     "Do not ask for or encourage sharing names, addresses, school IDs, passwords, phone numbers, private photos, or other personal information.",
-    "Do not claim to browse live sources or see the student's screen. If you do not know, say so."
+    "Format answers cleanly in Markdown: use headings only when helpful, short paragraphs, correctly numbered steps, and readable bullet lists. Put important equations on their own display-math lines using balanced LaTeX delimiters. Define symbols and show calculation steps when solving a problem.",
+    "Give a complete answer that ends naturally. Do not cut off a sentence, leave a list unfinished, or append a dangling invitation. If the topic is broad, give a useful complete overview rather than starting more detail than you can finish.",
+    "Do not claim to browse live sources or see the student screen. If you do not know, say so."
   ].join(" ");
 
   try {
@@ -61,7 +63,7 @@ export default async function studyTutor(request) {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         temperature: 0.3,
-        max_tokens: 900,
+        max_tokens: 1800,
         messages: [
           { role: "system", content: system },
           ...history,
@@ -80,9 +82,42 @@ export default async function studyTutor(request) {
       }, status);
     }
 
-    const reply = cleanText(result?.choices?.[0]?.message?.content, 3500);
+    let reply = cleanText(result?.choices?.[0]?.message?.content, 12000);
     if (!reply) return json({ error: "The tutor returned an empty answer. Please try asking in a different way." }, 502);
-    return json({ reply });
+
+    // If the model explicitly hit its output limit, ask it to finish the answer
+    // rather than sending the student a sentence cut off in the middle.
+    if (result?.choices?.[0]?.finish_reason === "length") {
+      try {
+        const continuation = await fetch(baseUrl.replace(/\/$/, "") + "/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "authorization": "Bearer " + apiKey
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            temperature: 0.3,
+            max_tokens: 700,
+            messages: [
+              { role: "system", content: system + " Continue the answer from the exact point where it stopped. Do not repeat the previous paragraphs. Finish all sentences and lists." },
+              ...history,
+              { role: "user", content: question },
+              { role: "assistant", content: reply },
+              { role: "user", content: "Continue from the last word, do not repeat, and finish the answer naturally." }
+            ]
+          })
+        });
+        if (continuation.ok) {
+          const extra = await continuation.json().catch(() => ({}));
+          const tail = cleanText(extra?.choices?.[0]?.message?.content, 5000);
+          if (tail) reply += "\n\n" + tail;
+        }
+      } catch (_) {
+        // Keep the useful partial answer if a continuation request fails.
+      }
+    }
+    return json({ reply: reply.slice(0, 16000) });
   } catch {
     return json({ error: "The AI tutor could not connect. Please check the deployment and try again." }, 502);
   }
