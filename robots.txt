@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saudi-student-hub.pages.dev/sitemap.xml
