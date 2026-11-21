@@ -4,6 +4,12 @@ const JSON_HEADERS = {
 };
 
 const MODEL_ID = "@cf/google/gemma-4-26b-a4b-it";
+const RATE_WINDOW_MS = 60_000;
+const RATE_LIMIT = 4;
+
+// Best-effort per-isolate abuse control. Cloudflare Workers AI's account-wide
+// daily free allocation remains the hard usage limit.
+const requestWindows = new Map();
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -18,7 +24,34 @@ function cleanText(value, max = 1200) {
     : "";
 }
 
+function isRateLimited(ip) {
+  const now = Date.now();
+  let entry = requestWindows.get(ip);
+
+  if (!entry || now - entry.startedAt >= RATE_WINDOW_MS) {
+    entry = { startedAt: now, count: 0 };
+  }
+
+  entry.count += 1;
+  requestWindows.set(ip, entry);
+
+  if (requestWindows.size > 2000) {
+    for (const [key, value] of requestWindows) {
+      if (now - value.startedAt >= RATE_WINDOW_MS) requestWindows.delete(key);
+    }
+  }
+
+  return entry.count > RATE_LIMIT;
+}
+
 export async function onRequestPost({ request, env }) {
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (isRateLimited(ip)) {
+    return json({
+      error: "You've sent several questions recently. Please wait a minute and try again."
+    }, 429);
+  }
+
   if (!env?.AI || typeof env.AI.run !== "function") {
     return json({
       error: "The AI service is not connected yet. In Cloudflare Pages, add a Workers AI binding named AI, then redeploy."
@@ -56,7 +89,7 @@ export async function onRequestPost({ request, env }) {
 
   const system = [
     "You are the Saudi Student Hub AI Tutor and general assistant for learners in Grades 6–12.",
-    "Answer a broad range of appropriate questions, including school subjects, general knowledge, writing, language learning, creativity, coding, study skills, and harmless everyday questions. Do not force every answer to be about school.",
+    "Answer appropriate questions about school subjects, general knowledge, writing, language learning, creativity, coding, study skills, and harmless everyday topics. Do not force every answer to be about school.",
     "When a question is about school, teach clearly and patiently. Use age-appropriate language, short sections, examples, and step-by-step explanations when useful.",
     "Reply in " + language + ". For Arabic answers, use clear modern standard Arabic. Keep equations and scientific symbols readable.",
     "The selected context is: curriculum " + curriculum + "; Grade " + grade + "; subject " + subject + (chapter ? "; selected chapter/topic " + chapter : "") + ".",
@@ -65,7 +98,7 @@ export async function onRequestPost({ request, env }) {
     "Keep all answers age-appropriate. Do not provide explicit sexual content, instructions facilitating violence or weapons, dangerous activities, self-harm, substance use, or other harmful conduct. Briefly decline such requests and offer a safe alternative.",
     "Do not ask for or encourage sharing names, addresses, school IDs, passwords, phone numbers, private photos, or other personal information.",
     "Format answers cleanly in Markdown. Use headings only when helpful, short paragraphs, correctly numbered steps, and readable bullet lists. Put important equations on their own display-math lines using balanced LaTeX delimiters. Define symbols and show calculation steps when solving a problem.",
-    "For chemistry equilibrium questions, define every symbol and state assumptions. For example, explain that Kp = Kc(RT)^Delta n for gaseous equilibria, where Delta n is moles of gaseous products minus moles of gaseous reactants, using balanced-equation coefficients.",
+    "For chemistry equilibrium questions, define every symbol and state assumptions. For gaseous equilibria, explain Kp = Kc(RT)^Delta n, where Delta n is the sum of gaseous-product coefficients minus gaseous-reactant coefficients in the balanced equation.",
     "Give a complete answer that ends naturally. Do not cut off a sentence or leave a list unfinished.",
     "Do not claim to browse live sources or see the student's screen. If you do not know, say so."
   ].join(" ");
@@ -77,9 +110,9 @@ export async function onRequestPost({ request, env }) {
         ...history,
         { role: "user", content: question }
       ],
-      max_tokens: 1200,
+      max_completion_tokens: 1200,
       temperature: 0.3
-    });
+    }, { rejectIfBusy: true });
 
     const rawReply =
       (typeof result === "string" ? result : "") ||
